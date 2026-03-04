@@ -1,0 +1,95 @@
+
+        body {
+            background-color: #2a2a2a; /* Dark, apocalyptic background */
+            color: #f1f1f1; /* Light text for contrast */
+            font-family: 'Courier New', Courier, monospace;
+            margin-top: 0;
+            text-align: center;
+        }
+
+        /* Header */
+        h1 {
+            color: #ff4d4d;
+            text-shadow: 2px 2px 5px #ff7f50;
+            font-size: 3rem;
+            margin-top: 30px;
+        }
+
+        /* Rectangle Containers */
+        .rectangle-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .rectangle {
+            background-color: #333;
+            width: 250px;
+            height: 250px;
+            border: 2px solid #f8d000;
+            color: #f8d000;
+            font-size: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-radius: 10px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 0 10px #ff4d4d; /* Glowing effect */
+            cursor: pointer;
+        }
+
+        .rectangle:hover {
+            background-color: #ff7f50; /* Orange background on hover */
+            transform: scale(1.05); /* Slight zoom effect */
+            color: #fff; /* White text on hover */
+            box-shadow: 0 0 15px #ff7f50; /* Glowing orange effect */
+        }
+
+        /* Style the button to fill the rectangle */
+        .rectangle button {
+            background-color: #333;
+            color: #f8d000;
+            font-size: 1.5rem;
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 0 10px #ff4d4d; /* Glowing effect */
+        }
+
+        .rectangle button:hover {
+            background-color: #ff7f50; /* Orange background on hover */
+            transform: scale(1.05); /* Slight zoom effect */
+            color: #fff; /* White text on hover */
+            box-shadow: 0 0 15px #ff7f50; /* Glowing orange effect */
+        }
+
+        /* Style for the "USE THEM mindfully" text */
+        .footer-text {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            font-size: 2rem;
+            color: #ff4d4d;
+            text-shadow: 2px 2px 5px #ff7f50;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 2px;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        /* Animation for the footer text */
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }

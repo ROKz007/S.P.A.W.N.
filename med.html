@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Item Trade Offer</title>
+
+    <!-- Custom Apocalypse Theme CSS -->
+    <style>
+        body {
+            background-color: #2a2a2a; /* Dark, apocalyptic background */
+            color: #f1f1f1; /* Light text for contrast */
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: #f8d000; /* Yellow background for the navbar */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1030;
+            box-shadow: 0 0 10px 5px #ff4d4d;
+            padding: 10px 0;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #000;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 5px #ff4d4d;
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Form and Button Styling */
+        .container {
+            background-color: #333;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ff4d4d;
+            width: 100%;
+            max-width: 600px; /* Set maximum width */
+            margin-top: 80px; /* Add some space from the navbar */
+        }
+
+        h2 {
+            text-align: center;
+            color: #f8d000;
+        }
+
+        label {
+            font-size: 1.2rem;
+            color: #f1f1f1;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #444;
+            color: #f1f1f1;
+            border: 1px solid #ff4d4d;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #f8d000;
+            border: 1px solid #f8d000;
+            color: #000;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 0 5px #ff4d4d;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        button:hover {
+            background-color: #ff7f50;
+            color: #fff;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">S.P.A.W.N</a>
+        </div>
+    </nav>
+
+    <!-- Trade Offer Form -->
+    <div class="container">
+        <h2>Submit Your Medical Item for Trade</h2>
+        <form id="tradeForm">
+            <div>
+                <label for="itemName">Item Name:</label>
+                <input type="text" id="itemName" required>
+            </div>
+            <div>
+                <label for="tradeFor">Item to Trade For:</label>
+                <input type="text" id="tradeFor" required>
+            </div>
+            <div>
+                <label for="itemDescription">Item Description:</label>
+                <textarea id="itemDescription" required></textarea>
+            </div>
+            <div>
+                <label for="contactNumber">Contact Number:</label>
+                <input type="text" id="contactNumber" required>
+            </div>
+            <button type="submit">Submit Offer</button>
+        </form>
+    </div>
+
+    <script>
+        // Handle form submission
+        document.getElementById("tradeForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+
+            // Get the values from the form
+            const itemName = document.getElementById("itemName").value;
+            const tradeFor = document.getElementById("tradeFor").value;
+            const itemDescription = document.getElementById("itemDescription").value;
+            const contactNumber = document.getElementById("contactNumber").value;
+
+            // Create a trade offer object
+            const offer = {
+                category: 'Medical', // This is where the category is specified
+                itemName: itemName,
+                tradeFor: tradeFor,
+                itemDescription: itemDescription,
+                contactNumber: contactNumber
+            };
+
+            // Get the current trade offers from localStorage or initialize an empty array
+            let tradeOffers = JSON.parse(localStorage.getItem('tradeOffers')) || [];
+
+            // Add the new offer to the array
+            tradeOffers.push(offer);
+
+            // Save the updated offers back to localStorage
+            localStorage.setItem('tradeOffers', JSON.stringify(tradeOffers));
+
+            // Optionally, clear the form after submission
+            document.getElementById("tradeForm").reset();
+            alert("Offer submitted successfully!");
+        });
+    </script>
+
+</body>
+</html>

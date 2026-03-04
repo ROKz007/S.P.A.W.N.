@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Google Fonts: Retro Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <!-- Custom CSS to match the retro theme -->
+  <style>
+    body {
+      background-color: #111; /* Dark background for the entire page */
+      color: #fff;
+      font-family: 'Press Start 2P', cursive; /* Retro pixelated font */
+    }
+
+    .container {
+      max-width: 400px;
+      margin-top: 150px;
+      padding: 30px;
+      background-color: #222;
+      border-radius: 8px;
+      box-shadow: 0px 0px 20px rgba(255, 0, 0, 0.6); /* Retro glow effect */
+      border: 3px solid #ff6347; /* Retro orange border */
+    }
+
+    h2 {
+      font-family: 'Press Start 2P', cursive; /* Retro pixelated font */
+      margin-bottom: 30px;
+      color: #f8d000; /* Yellow color for heading */
+      font-size: 3rem;
+      text-align: center;
+      text-shadow: 2px 2px 5px rgba(248, 208, 0, 0.8); /* Retro glow effect */
+    }
+
+    .form-label {
+      font-size: 1.5rem;
+      color: #f8d000;
+      font-weight: bold;
+      text-shadow: 1px 1px 3px rgba(248, 208, 0, 0.8); /* Retro text shadow */
+    }
+
+    .form-control {
+      border-radius: 5px;
+      padding: 12px;
+      font-size: 1.2rem;
+      background-color: #333;
+      color: #fff;
+      border: 2px solid #444;
+      box-shadow: 0px 0px 5px rgba(248, 208, 0, 0.8); /* Retro glow effect */
+    }
+
+    .form-control:focus {
+      border-color: #f8d000; /* Yellow border on focus */
+      box-shadow: 0 0 10px rgba(248, 208, 0, 0.8);
+    }
+
+    .btn-primary {
+      width: 100%;
+      background-color: #f8d000; /* Yellow background */
+      border: 2px solid #f8d000;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 1.5rem;
+      padding: 12px 20px;
+      color: #000;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      box-shadow: 0px 0px 10px rgba(248, 208, 0, 0.6);
+      text-shadow: 1px 1px 3px rgba(248, 208, 0, 0.8); /* Retro text shadow */
+    }
+
+    .btn-primary:hover {
+      background-color: #ff7f50; /* Orange on hover */
+      border-color: #ff7f50;
+      color: #fff;
+      text-shadow: 1px 1px 5px rgba(255, 127, 80, 0.8); /* Retro hover effect */
+    }
+
+    .btn-primary:focus {
+      box-shadow: none; /* Remove the focus outline */
+    }
+
+    .text-center {
+      color: #f8d000;
+      margin-top: 20px;
+      font-size: 1.2rem;
+    }
+
+    .text-center a {
+      color: #f8d000;
+      font-weight: bold;
+    }
+
+    .text-center a:hover {
+      color: #ff7f50;
+      text-shadow: 1px 1px 5px rgba(255, 127, 80, 0.8); /* Retro hover effect */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Sign Up</h2>
+    <form id="signupForm">
+      <!-- Name Input -->
+      <div class="mb-3">
+        <label for="name" class="form-label">Full Name</label>
+        <input type="text" class="form-control" id="name" required>
+      </div>
+
+      <!-- Email Input -->
+      <div class="mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" class="form-control" id="email" required>
+      </div>
+
+      <!-- Password Input -->
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" required>
+      </div>
+
+      <!-- Confirm Password Input -->
+      <div class="mb-3">
+        <label for="confirmPassword" class="form-label">Confirm Password</label>
+        <input type="password" class="form-control" id="confirmPassword" required>
+      </div>
+
+      <!-- Sign Up Button -->
+      <button type="submit" class="btn btn-primary">Sign Up</button>
+    </form>
+
+    <p class="text-center mt-3">Already have an account? <a href="login.html">Log In</a></p>
+  </div>
+
+  <!-- Bootstrap 5 JS (with Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+  <!-- Custom JS -->
+  <script>
+    document.getElementById('signupForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+  
+      // Get the form data
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+  
+      // Check if passwords match
+      if (password !== confirmPassword) {
+        alert('Passwords do not match');
+        return;
+      }
+  
+      // Store the user data in localStorage
+      const userData = {
+        name: name,
+        email: email,
+        password: password
+      };
+  
+      // Save user data in localStorage (as a string)
+      localStorage.setItem('user', JSON.stringify(userData));
+  
+      // Redirect to the login page
+      alert('Sign-up successful! You can now log in.');
+      window.location.href = 'login.html';
+    });
+  </script>
+  
+</body>
+</html>

@@ -1,0 +1,136 @@
+body {
+    background-color: #2a2a2a; /* Dark, apocalyptic background */
+    color: #f1f1f1; /* Light text for contrast */
+    font-family: 'Courier New', Courier, monospace;
+    margin-top: 0;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #f8d000; /* Yellow background for the navbar */
+    position: fixed; /* Make navbar fixed to the top */
+    top: 0;
+    left: 0;
+    width: 100%; /* Ensure it takes the full width */
+    z-index: 1030; /* Ensure it stays above other elements */
+    box-shadow: 0 0 10px 5px #ff4d4d; /* Shadow for dramatic effect */
+    padding: 10px 0; /* Reduced padding for a smaller navbar */
+    
+}
+
+.navbar-brand {
+    font-family: 'Poppins', sans-serif; /* Use Poppins font */
+    font-size: 2rem; /* Reduced font size for the brand */
+    font-weight: bold;
+    color: #000; /* Black color for the brand */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 5px #ff4d4d; /* Apocalyptic text effect */
+    text-align: center; /* Center the text */
+    width: 100%; /* Ensure it takes the full width of the navbar */
+}
+
+/* Button Container */
+.button-container {
+    margin-top: 80px; /* Space below navbar */
+    text-align: center;
+}
+
+/* Style for the buttons to appear in one line */
+.button-container .btn {
+    margin: 10px; /* Space between buttons */
+    font-size: 1.5rem;
+    padding: 15px 25px;
+    font-weight: bold; /* Make the text bold */
+    text-transform: uppercase;
+    color: #000; /* Black text */
+    background-color: #f8d000; /* Yellow background */
+    border: 2px solid #f8d000; /* Yellow border */
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-shadow: 1px 1px 3px #ff4d4d; /* Apocalypse text effect */
+}
+
+.btn:hover {
+    background-color: #ff7f50; /* Orange background on hover */
+    color: #fff; /* White text on hover */
+    border-color: #ff7f50; /* Orange border on hover */
+    box-shadow: 0 0 10px #ff7f50; /* Glowing effect */
+}
+
+/* Info Box Container */
+.info-box-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    flex-wrap: wrap; /* Ensure responsiveness for smaller screens */
+    width: 100%;
+    margin-top: 40px;
+}
+
+/* Info Box */
+.info-box {
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 2px solid #ff4d4d;
+    padding: 20px;
+    color: #f1f1f1;
+    font-size: 1rem;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 0 10px 5px #ff4d4d;
+    box-sizing: border-box;
+    flex: 1;
+    max-width: 30%;
+    margin: 10px;
+}
+
+.info-box h3 {
+    font-size: 1.5rem;
+    color: #ff4d4d;
+    text-shadow: 2px 2px 5px #ff7f50;
+    margin-bottom: 10px;
+}
+
+.info-box p {
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+    .info-box {
+        flex: 1 1 100%; /* Stack boxes on smaller screens */
+        max-width: 100%;
+    }
+}
+
+/* Listings Section */
+.listings-box {
+    background-color: #333;
+    margin-top: 40px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #ff4d4d;
+    color: #f8d000;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.listing {
+    background-color: #444;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px #ff4d4d;
+}
+
+.listing h5 {
+    color: #ff7f50;
+    font-size: 1.2rem;
+}
+
+.listing p {
+    color: #f1f1f1;
+    font-size: 1rem;
+}

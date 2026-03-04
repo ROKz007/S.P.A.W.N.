@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Console</title>
+  
+    <!-- Google Font for Grungy Style -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <!-- Custom Apocalypse Style CSS -->
+    <link rel="stylesheet" href="admin.css">
+
+</head>
+<body>
+
+    <div class="content-container">
+        <h1 class="glitch" data-text="Admin Console">Admin Console</h1>
+
+        <!-- Admin Message Input Box -->
+        <div class="form-container">
+            <input type="text" class="input-box" placeholder="Enter message to display on site" id="adminMessage">
+            <button class="btn" onclick="submitMessage()">Submit Message</button>
+        </div>
+
+        <!-- City Dropdown and Intensity Input -->
+        <div class="form-container">
+            <select class="input-box" id="cityDropdown">
+                <option value="">Select a city</option>
+                <option value="Bhubaneswar">Bhubaneswar</option>
+                <option value="Cuttack">Cuttack</option>
+                <option value="Berhampur">Berhampur</option>
+                <option value="Rourkela">Rourkela</option>
+                <option value="Balasore">Balasore</option>
+                <option value="Sambalpur">Sambalpur</option>
+                <option value="Koraput">Koraput</option>
+                <option value="Baripada">Baripada</option>
+                <option value="Jeypore">Jeypore</option>
+                <option value="Angul">Angul</option>
+                <option value="Kendrapara">Kendrapara</option>
+                <option value="Dhenkanal">Dhenkanal</option>
+                <option value="Bargarh">Bargarh</option>
+                <option value="Nayagarh">Nayagarh</option>
+                <option value="Puri">Puri</option>
+                <option value="Jagatsinghpur">Jagatsinghpur</option>
+                <option value="Kendujhar">Kendujhar</option>
+                <option value="Malkangiri">Malkangiri</option>
+                <option value="Ganjam">Ganjam</option>
+                <option value="Kalahandi">Kalahandi</option>
+            </select>
+            <input type="number" class="input-box" id="intensity" placeholder="Enter intensity (decimal)">
+            <button class="btn" onclick="submitLocation()">Submit Location</button>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+
+</body>
+</html>
