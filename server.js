@@ -1,18 +1,19 @@
 require('dotenv').config(); 
+const cors = require('cors'); // Add at top
 const express = require('express');
 const mysql = require('mysql2'); 
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs'); 
 const jwt = require('jsonwebtoken'); 
 const authMiddleware = require('./middleware/authMiddleware'); // Import Step 3 middleware
+const app = express();
 const http = require('http');
 const { Server } = require('socket.io');
 const server = http.createServer(app);
 const io = new Server(server);
 const cron = require('node-cron');
 const adminMiddleware = require('./middleware/adminMiddleware');
-
-const app = express();
+app.use(cors());              // Add after app = express()
 app.use(express.static(__dirname));
 const port = process.env.PORT || 3000;
 
