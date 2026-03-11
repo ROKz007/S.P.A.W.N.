@@ -5,47 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trade Page</title>
 
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Custom Apocalypse Theme CSS -->
-    <link rel="stylesheet" href="trade.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/components.css">
+
+    <link rel="stylesheet" href="css/pages/trade.css">
 </head>
 <body>
+    <div id="app">
+        <nav></nav>
 
-    <h1>Trade Marketplace</h1>
+        <main class="panel active">
+            <div class="panel-header">TRADE POST — BARTER EXCHANGE</div>
+            
+            <div class="trade-tabs">
+                <button class="trade-tab active" onclick="filterTrades('all')">ALL ITEMS</button>
+                <button class="trade-tab" onclick="filterTrades('medical')">MEDICAL</button>
+                <button class="trade-tab" onclick="filterTrades('supplies')">SUPPLIES</button>
+                <button class="trade-tab" onclick="filterTrades('apparel')">APPAREL</button>
+                <button class="trade-tab" onclick="filterTrades('equipment')">EQUIPMENT</button>
+            </div>
 
-    <!-- Rectangle Containers -->
-    <div class="rectangle-container">
-        <!-- Rectangle 1 - Medical -->
-        <div class="rectangle">
-            <button onclick="window.location.href='/S.P.A.W.N/med.html'">Medical</button>
-        </div>
+            <div class="trade-grid" id="trade-grid"></div>
 
-        <!-- Rectangle 2 - Supplies -->
-        <div class="rectangle">
-            <button onclick="window.location.href='/S.P.A.W.N/supp.html'">Supplies</button>
-        </div>
-
-        <!-- Rectangle 3 - Apparel -->
-        <div class="rectangle">
-            <button onclick="window.location.href='/S.P.A.W.N/aprl.html'">Apparel</button>
-        </div>
-
-        <!-- Rectangle 4 - Equipment -->
-        <div class="rectangle">
-            <button onclick="window.location.href='/S.P.A.W.N/equip.html'">Equipment</button>
-        </div>
+            <section class="spawn-form">
+                <div class="form-title">// POST A TRADE OFFER</div>
+                <div class="form-grid">
+                    <div class="form-group"><label>ITEM NAME</label><input id="t-name"></div>
+                    <div class="form-group">
+                        <label>CATEGORY</label>
+                        <select id="t-cat">
+                            <option value="medical">Medical</option>
+                            <option value="supplies">Supplies</option>
+                            <option value="apparel">Apparel</option>
+                            <option value="equipment">Equipment</option>
+                        </select>
+                    </div>
+                    <div class="form-group full"><label>TERMS</label><textarea id="t-desc"></textarea></div>
+                    <div class="form-group"><label>CONTACT/FREQ</label><input id="t-contact"></div>
+                    <div class="form-group"><label>LOCATION</label><input id="t-loc"></div>
+                </div>
+                <button class="spawn-btn" onclick="postTrade()">BROADCAST TRADE ›</button>
+            </section>
+        </main>
     </div>
 
-    <!-- Footer Text -->
-    <div class="footer-text">
-        USE THEM MINDFULLY!!!
-    </div>
-
-    <!-- Bootstrap 5 JS (with Popper) -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
-
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/trade.js"></script>
 </body>
 </html>

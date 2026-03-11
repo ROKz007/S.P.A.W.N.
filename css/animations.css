@@ -1,0 +1,46 @@
+/* css/animations.css */
+
+/* Main logo and heading glitch effect */
+@keyframes glitch-main {
+  0%, 90%, 100% { 
+    text-shadow: 0 0 10px var(--rust-bright), 0 0 40px rgba(255,77,77,0.3); 
+    transform: none; 
+  }
+  92% { 
+    transform: translate(-2px, 0); 
+    text-shadow: 2px 0 var(--yellow), -2px 0 var(--green); 
+  }
+  94% { 
+    transform: translate(2px, 0); 
+    text-shadow: -2px 0 var(--yellow), 2px 0 var(--green); 
+  }
+  96% { transform: none; }
+}
+
+/* Pulsing for online status and map hotspots */
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.9); }
+}
+
+/* Flickering for high-danger zones */
+@keyframes flicker {
+  0% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
+/* Marquee for the emergency alert ticker */
+@keyframes marquee {
+  0% { transform: translateX(100vw); }
+  100% { transform: translateX(-100%); }
+}
+
+/* Smooth fade-in for terminal lines and chat messages */
+@keyframes fadein {
+  to { opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -4,56 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Console</title>
-  
-    <!-- Google Font for Grungy Style -->
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-
-    <!-- Custom Apocalypse Style CSS -->
-    <link rel="stylesheet" href="admin.css">
+    
+    <!-- Link to external CSS for styling -->
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages/admin.css">
 
 </head>
 <body>
+    <div id="app">
+        <nav></nav>
 
-    <div class="content-container">
-        <h1 class="glitch" data-text="Admin Console">Admin Console</h1>
+        <main class="panel active">
+            <div class="panel-header">ADMIN CONSOLE — RESTRICTED ACCESS</div>
+            
+            <div class="admin-grid">
+                <section class="admin-card">
+                    <div class="admin-section-title">BROADCAST MESSAGE</div>
+                    <div class="form-group">
+                        <label>MESSAGE CONTENT</label>
+                        <textarea id="admin-msg-input" rows="3" placeholder="Enter global broadcast..."></textarea>
+                    </div>
+                    <button class="spawn-btn" onclick="broadcastMsg()">BROADCAST ›</button>
+                </section>
 
-        <!-- Admin Message Input Box -->
-        <div class="form-container">
-            <input type="text" class="input-box" placeholder="Enter message to display on site" id="adminMessage">
-            <button class="btn" onclick="submitMessage()">Submit Message</button>
-        </div>
-
-        <!-- City Dropdown and Intensity Input -->
-        <div class="form-container">
-            <select class="input-box" id="cityDropdown">
-                <option value="">Select a city</option>
-                <option value="Bhubaneswar">Bhubaneswar</option>
-                <option value="Cuttack">Cuttack</option>
-                <option value="Berhampur">Berhampur</option>
-                <option value="Rourkela">Rourkela</option>
-                <option value="Balasore">Balasore</option>
-                <option value="Sambalpur">Sambalpur</option>
-                <option value="Koraput">Koraput</option>
-                <option value="Baripada">Baripada</option>
-                <option value="Jeypore">Jeypore</option>
-                <option value="Angul">Angul</option>
-                <option value="Kendrapara">Kendrapara</option>
-                <option value="Dhenkanal">Dhenkanal</option>
-                <option value="Bargarh">Bargarh</option>
-                <option value="Nayagarh">Nayagarh</option>
-                <option value="Puri">Puri</option>
-                <option value="Jagatsinghpur">Jagatsinghpur</option>
-                <option value="Kendujhar">Kendujhar</option>
-                <option value="Malkangiri">Malkangiri</option>
-                <option value="Ganjam">Ganjam</option>
-                <option value="Kalahandi">Kalahandi</option>
-            </select>
-            <input type="number" class="input-box" id="intensity" placeholder="Enter intensity (decimal)">
-            <button class="btn" onclick="submitLocation()">Submit Location</button>
-        </div>
+                <section class="admin-card">
+                    <div class="admin-section-title">INJECT THREAT DATA</div>
+                    <div class="form-group">
+                        <label>SELECT CITY</label>
+                        <select id="admin-city">
+                            <option value="Bhubaneswar">Bhubaneswar</option>
+                            <option value="Cuttack">Cuttack</option>
+                            <option value="Rourkela">Rourkela</option>
+                            <option value="Puri">Puri</option>
+                            <option value="Sambalpur">Sambalpur</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>INTENSITY LEVEL</label>
+                        <input type="range" class="intensity-slider" id="admin-intensity" min="0" max="1" step="0.01" value="0.5" 
+                               oninput="document.getElementById('intensity-val').textContent=parseFloat(this.value).toFixed(2)">
+                        <div class="intensity-val" id="intensity-val">0.50</div>
+                    </div>
+                    <button class="spawn-btn" onclick="injectData()">INJECT DATA ›</button>
+                    
+                    <div class="city-log" id="city-log"></div>
+                </section>
+            </div>
+        </main>
     </div>
 
-    <script src="admin.js"></script>
-
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/admin.js"></script>
 </body>
 </html>

@@ -1,0 +1,65 @@
+/* css/pages/admin.css */
+
+.admin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 700px) { 
+    .admin-grid { grid-template-columns: 1fr; } 
+}
+
+.admin-card {
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--rust); /* Distinction for admin priority */
+    padding: 20px;
+}
+
+.admin-section-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--rust-bright);
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+}
+
+/* Threat Injection Controls */
+.intensity-slider {
+    width: 100%;
+    accent-color: var(--rust-bright);
+    margin: 8px 0;
+    cursor: crosshair;
+}
+
+.intensity-val {
+    font-size: 28px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    color: var(--yellow);
+    margin: 8px 0;
+}
+
+/* Live Injection Log */
+.city-log {
+    margin-top: 16px;
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.8;
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid #1a1a1a;
+    padding: 10px;
+    background: var(--dark);
+}
+
+.city-log .log-entry { 
+    display: block; 
+    border-bottom: 1px solid #1a1a1a; 
+    padding: 4px 0; 
+}
+
+.city-log .log-entry .ts { color: var(--text-dim); margin-right: 8px; }
+.city-log .log-entry .loc { color: var(--green); }
+.city-log .log-entry .val { color: var(--rust-bright); }

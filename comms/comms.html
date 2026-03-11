@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat - S.P.A.W.N</title>
+
+    <!-- Link to external CSS for styling -->
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/components.css">
+
+    <link rel="stylesheet" href="css/pages/comms.css">
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+  </head>
+  <body>
+    <div id="app">
+        <nav></nav>
+
+        <main class="panel active">
+            <div class="panel-header">COMMS — ENCRYPTED CHANNEL</div>
+            
+            <div class="chat-wrapper">
+                <div class="chat-main">
+                    <div class="chat-header">
+                        <div class="pulse-dot"></div>
+                        CHANNEL ALPHA // OPEN FREQUENCY
+                    </div>
+                    <div class="chat-messages" id="chat-messages"></div>
+                    
+                    <div class="chat-input-area">
+                        <input class="chat-input" id="chat-input" placeholder="transmit message..." onkeydown="if(event.key==='Enter')sendMsg()">
+                        <button class="chat-send" onclick="sendMsg()">SEND ›</button>
+                    </div>
+                </div>
+
+                <div class="online-list">
+                    <div class="online-title">ONLINE SURVIVORS</div>
+                    <div class="online-users" id="online-users"></div>
+                    <button class="spawn-btn" style="width:100%; margin-top:auto; background:var(--rust)" onclick="triggerSOS()">🚨 SEND SOS</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/comms.js"></script>
+  </body>
+</html>

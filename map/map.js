@@ -1,34 +1,38 @@
+/* js/heatmap.js */
 let map, heatmap;
 
-function initMap() {
-    map = new google.maps.Map(document.getElementById('map'), {
+async function initMap() {
+    // 1. Initialize Map
+    map = new google.maps.Map(document.getElementById('map-canvas'), {
+        center: { lat: 20.9374, lng: 85.0938 }, // Odisha Center
         zoom: 7,
-        center: {lat: 20.2961, lng: 85.8189},
-        mapTypeId: 'satellite'
+        mapTypeId: 'satellite',
+        disableDefaultUI: true
     });
 
-    // Fetch live data from the backend
-    fetch('/api/heatmap')
-        .then(response => response.json())
-        .then(data => {
-            const heatmapData = data.map(location => ({
-                location: new google.maps.LatLng(location.latitude, location.longitude),
-                weight: parseFloat(location.intensity)
-            }));
+    // 2. Load Data from Backend
+    const data = await apiFetch('/heatmap');
+    renderHeatmap(data);
+}
 
-            heatmap = new google.maps.visualization.HeatmapLayer({
-                data: heatmapData,
-                map: map,
-                radius: 30,
-                dissipating: true
-            });
+function renderHeatmap(points) {
+    // Transform DB rows to Google Maps LatLng objects
+    const weightedData = points.map(p => ({
+        location: new google.maps.LatLng(p.latitude, p.longitude),
+        weight: parseFloat(p.intensity)
+    }));
 
-            heatmap.set('gradient', [
-                'rgba(0, 255, 0, 0)',   
-                'rgba(255, 255, 0, 1)', 
-                'rgba(255, 0, 0, 1)'    
-            ]);
-            heatmap.set('opacity', 0.7);
-        })
-        .catch(err => console.error("Could not load threat data:", err));
+    // Create/Update Heatmap Layer
+    heatmap = new google.maps.visualization.HeatmapLayer({
+        data: weightedData,
+        map: map,
+        radius: 40,
+        opacity: 0.75,
+        gradient: [
+            'rgba(57,255,20,0)',   // Transparent green
+            'rgba(57,255,20,1)',   // Solid green
+            '#f8d000',             // Yellow
+            '#ff4d4d'              // Rust Bright
+        ]
+    });
 }

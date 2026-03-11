@@ -1,0 +1,48 @@
+/* css/components.css */
+
+/* The Card Panel */
+.card {
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: var(--rust);
+}
+
+/* The Beveled Action Button */
+.spawn-btn {
+  background: var(--rust);
+  border: none;
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  padding: 12px 24px;
+  cursor: crosshair;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  transition: all 0.2s;
+}
+
+.spawn-btn:hover {
+  background: var(--rust-bright);
+  box-shadow: 0 0 20px rgba(255,77,77,0.4);
+}
+
+/* Post-Apocalyptic Form Inputs */
+.auth-input, .chat-input {
+  background: var(--dark);
+  border: 1px solid #333;
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  padding: 12px;
+  outline: none;
+}
+
+.auth-input:focus { border-color: var(--rust); }

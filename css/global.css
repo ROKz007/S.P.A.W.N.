@@ -1,0 +1,55 @@
+/* css/global.css */
+:root {
+  --rust: #c0392b;
+  --rust-bright: #ff4d4d;
+  --yellow: #f8d000;
+  --green: #39ff14;
+  --dark: #0a0a0a;
+  --dark2: #111;
+  --dark3: #1a1a1a;
+  --dark4: #222;
+  --border: #2a2a2a;
+  --text: #ccc;
+  --text-dim: #666;
+  --orange: #ff6b00;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--dark);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  overflow-x: hidden;
+  cursor: crosshair;
+}
+
+/* SCANLINES OVERLAY */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* NOISE TEXTURE */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg...");
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--dark2); }
+::-webkit-scrollbar-thumb { background: #333; }

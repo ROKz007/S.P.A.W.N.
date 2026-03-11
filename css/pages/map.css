@@ -1,0 +1,60 @@
+/* css/pages/map.css */
+
+#map-canvas {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #0d1a0d;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    cursor: crosshair;
+}
+
+/* The underlying grid effect */
+.map-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(57,255,20,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(57,255,20,0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+/* Custom HTML Marker Overlays */
+.map-region {
+    position: absolute;
+    font-size: 9px;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 1px;
+    cursor: crosshair;
+    transform: translate(-50%, -50%);
+}
+
+.hotspot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 4px;
+    animation: pulse 2s infinite; /* Defined in animations.css */
+    vertical-align: middle;
+}
+
+.region-label {
+    opacity: 0.7;
+    transition: all 0.2s;
+    vertical-align: middle;
+}
+
+.map-legend {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: rgba(0,0,0,0.8);
+    border: 1px solid #333;
+    padding: 10px 14px;
+    font-size: 10px;
+}
+
+.legend-item { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; }

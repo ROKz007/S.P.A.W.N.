@@ -6,15 +6,31 @@
     <title>Odisha Heatmap</title>
 
     <!-- Link to external CSS for styling -->
-    <link href="map.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/components.css">
+
+    <link rel="stylesheet" href="css/pages/map.css">
 
     <!-- Google Maps API (Replace YOUR_API_KEY with your actual API key) -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQdaiYnVg_0Lb7dJP35MVQp_EVEoOvFPk&libraries=visualization&callback=initMap" async defer></script>
 </head>
 <body>
-    <div id="map"></div>
+    <div id="app">
+        <div id="map-canvas">
+            <div class="map-grid"></div> </div>
+        
+        <div class="map-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div><span>LOW</span></div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div><span>MID</span></div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--rust-bright)"></div><span>HIGH</span></div>
+        </div>
+    </div>
 
-    <!-- Link to external JS for map functionality -->
-    <script src="map.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/heatmap.js"></script>
+    <script async src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=visualization&callback=initMap"></script>
 </body>
 </html>

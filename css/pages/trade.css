@@ -1,0 +1,75 @@
+/* css/pages/trade.css */
+
+.trade-tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.trade-tab {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    padding: 10px 18px;
+    cursor: crosshair;
+    letter-spacing: 2px;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+
+.trade-tab.active, .trade-tab:hover {
+    color: var(--yellow);
+    border-bottom-color: var(--yellow);
+}
+
+.trade-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* */
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.trade-card {
+    background: var(--dark4);
+    border: 1px solid var(--border);
+    padding: 16px;
+    position: relative;
+    transition: all 0.2s;
+}
+
+.trade-card:hover { 
+    border-color: #333; 
+    transform: translateY(-2px); 
+}
+
+/* Category Badges */
+.trade-category-badge {
+    display: inline-block;
+    font-size: 9px;
+    padding: 3px 8px;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+}
+
+.badge-medical { background: rgba(255,77,77,0.15); color: var(--rust-bright); border-color: rgba(255,77,77,0.3); }
+.badge-supplies { background: rgba(248,208,0,0.1); color: var(--yellow); border-color: rgba(248,208,0,0.3); }
+.badge-apparel { background: rgba(57,255,20,0.1); color: var(--green); border-color: rgba(57,255,20,0.3); }
+.badge-equipment { background: rgba(255,107,0,0.1); color: var(--orange); border-color: rgba(255,107,0,0.3); }
+
+.trade-item-name {
+    font-family: 'Rajdhani', sans-serif; /* */
+    font-weight: 700;
+    font-size: 18px;
+    color: #eee;
+}
+
+.trade-contact {
+    font-size: 11px;
+    color: var(--green);
+    margin-top: 8px;
+}

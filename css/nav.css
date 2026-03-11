@@ -1,0 +1,83 @@
+/* css/nav.css */
+
+nav {
+  background: var(--dark2);
+  border-bottom: 2px solid var(--rust);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 20px rgba(255,77,77,0.15);
+}
+
+.nav-logo {
+  font-family: 'Press Start 2P', monospace; /* */
+  font-size: 16px;
+  color: var(--rust-bright);
+  text-shadow: 0 0 10px var(--rust-bright);
+  letter-spacing: 3px;
+  animation: glitch-main 4s infinite; /* */
+}
+
+.nav-links { display: flex; gap: 4px; }
+
+.nav-btn {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-family: 'Share Tech Mono', monospace; /* */
+  font-size: 12px;
+  padding: 8px 14px;
+  cursor: crosshair;
+  letter-spacing: 2px;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+  text-transform: uppercase;
+}
+
+.nav-btn:hover, .nav-btn.active {
+  color: var(--yellow);
+  border-bottom-color: var(--yellow);
+}
+
+.nav-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--green);
+}
+
+.pulse-dot {
+  width: 8px; height: 8px;
+  background: var(--green);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--green);
+  animation: pulse 1.5s infinite; /* */
+}
+
+/* Emergency Alert Bar Below Nav */
+#alert-bar {
+  background: repeating-linear-gradient(
+    45deg, #1a0a00, #1a0a00 10px, #1f0d00 10px, #1f0d00 20px
+  );
+  border-bottom: 1px solid var(--orange);
+  padding: 8px 24px;
+  font-size: 11px;
+  color: var(--orange);
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+}
+
+#alert-bar span { 
+  animation: marquee 20s linear infinite; 
+  display: inline-block; 
+  white-space: nowrap;
+}
