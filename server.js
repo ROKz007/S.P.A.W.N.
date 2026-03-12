@@ -14,6 +14,8 @@ const io = new Server(server);
 const cron = require('node-cron');
 const adminMiddleware = require('./middleware/adminMiddleware');
 app.use(cors());              // Add after app = express()
+const path = require('path'); // Add this at the top if not there
+app.use(express.static(path.join(__dirname, './')));
 app.use(express.static(__dirname));
 const port = process.env.PORT || 3000;
 
@@ -102,6 +104,31 @@ app.get('/api/admin/stats', authMiddleware, adminMiddleware, (req, res) => {
                 });
             });
         });
+    });
+});
+app.post('/api/admin/broadcast', authMiddleware, adminMiddleware, (req, res) => {
+    const { message } = req.body;
+    io.emit('new_message', { 
+        user: 'SYSTEM', 
+        content: `GLOBAL ALERT: ${message}`, 
+        system: true 
+    });
+    res.json({ message: 'Broadcast successful' });
+});
+
+// Server-Side Missing Routes
+app.post('/api/admin/broadcast', authMiddleware, adminMiddleware, (req, res) => {
+    const { message } = req.body;
+    io.emit('new_message', { user: 'SYSTEM', content: `BROADCAST: ${message}`, system: true });
+    res.json({ success: true });
+});
+
+app.post('/api/heatmap/inject', authMiddleware, adminMiddleware, (req, res) => {
+    const { city, intensity } = req.body;
+    const query = 'UPDATE heatmap_locations SET intensity = ? WHERE city = ?';
+    connection.query(query, [intensity, city], (err) => {
+        if (err) return res.status(500).json({ error: 'Update failed' });
+        res.json({ success: true });
     });
 });
 

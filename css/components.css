@@ -46,3 +46,44 @@
 }
 
 .auth-input:focus { border-color: var(--rust); }
+
+/* Styling for the Auth Overlay and Box */
+#auth-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: none; /* Changed to flex by the JS script */
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.auth-box {
+    background: var(--dark2);
+    border: 1px solid var(--border);
+    padding: 30px;
+    width: 350px;
+    box-shadow: 0 0 30px rgba(192, 57, 43, 0.2);
+    text-align: center;
+}
+
+.auth-tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.auth-tab {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-family: 'Share Tech Mono', monospace;
+    padding: 10px;
+    cursor: crosshair;
+}
+
+.auth-tab.active {
+    color: var(--rust-bright);
+    border-bottom: 2px solid var(--rust-bright);
+}
