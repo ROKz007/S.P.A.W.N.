@@ -15,6 +15,12 @@ const cron = require('node-cron');
 const adminMiddleware = require('./middleware/adminMiddleware');
 app.use(cors());              // Add after app = express()
 const path = require('path'); // Add this at the top if not there
+
+// Add these above your standard app.use(express.static(...))
+app.use(express.static(path.join(__dirname, 'map')));
+app.use(express.static(path.join(__dirname, 'trade')));
+app.use(express.static(path.join(__dirname, 'comms')));
+app.use(express.static(path.join(__dirname, 'admin')));
 app.use(express.static(path.join(__dirname, './')));
 app.use(express.static(__dirname));
 const port = process.env.PORT || 3000;
