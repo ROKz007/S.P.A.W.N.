@@ -64,12 +64,23 @@ app.post('/api/auth/signup', async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const query = 'INSERT INTO users (callsign, password_hash, region) VALUES (?, ?, ?)';
+    
     connection.query(query, [callsign, hashedPassword, region], (err, result) => {
-      if (err) return res.status(409).json({ error: 'Callsign taken.' });
-      const token = jwt.sign({ userId: result.insertId, callsign, role: 'survivor' }, process.env.JWT_SECRET, { expiresIn: '24h' });
+      if (err) {
+          console.error(err);
+          return res.status(409).json({ error: 'Callsign taken or database error.' });
+      }
+      // Create token
+      const token = jwt.sign(
+          { userId: result.insertId, callsign, role: 'survivor' }, 
+          process.env.JWT_SECRET, 
+          { expiresIn: '24h' }
+      );
       res.status(201).json({ token, user: { id: result.insertId, callsign, region } });
     });
-  } catch (error) { res.status(500).json({ error: 'Server error.' }); }
+  } catch (error) { 
+    res.status(500).json({ error: 'Server error during encryption.' }); 
+  }
 });
 
 app.post('/api/auth/login', (req, res) => {
