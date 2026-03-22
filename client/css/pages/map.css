@@ -13,6 +13,8 @@
 /* The underlying grid effect */
 .map-grid {
     position: absolute;
+    pointer-events: none;
+    z-index: 10;
     inset: 0;
     background-image:
         linear-gradient(rgba(57,255,20,0.05) 1px, transparent 1px),

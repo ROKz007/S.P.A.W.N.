@@ -1,7 +1,13 @@
-/* js/config.js */
+/* client/js/config.js */
 const CONFIG = {
-  API_BASE:    'http://localhost:3000/api', // Your Node.js server address
-  SOCKET_URL:  'http://localhost:3000',     // For real-time comms
-  TOKEN_KEY:   'spawn_token',              // Key for sessionStorage
-  USER_KEY:    'spawn_user'                // Key for user profile
+  API_BASE: window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000/api' 
+    : '/api',
+  
+  SOCKET_URL: window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000' 
+    : window.location.origin,
+    
+  TOKEN_KEY: 'spawn_token',
+  USER_KEY: 'spawn_user'
 };

@@ -6,18 +6,29 @@
     <title>Odisha Heatmap</title>
 
     <!-- Link to external CSS for styling -->
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <link rel="stylesheet" href="css/nav.css">
-    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="/css/global.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/nav.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/pages/map.css">
 
-    <link rel="stylesheet" href="css/pages/map.css">
-
-    <!-- Google Maps API (Replace YOUR_API_KEY with your actual API key) -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQdaiYnVg_0Lb7dJP35MVQp_EVEoOvFPk&libraries=visualization&callback=initMap" async defer></script>
 </head>
 <body>
     <div id="app">
+        <nav>
+            <div class="nav-logo">S.P.A.W.N.</div>
+            <div class="nav-links">
+                <a href="/index.html" class="nav-btn">HOME BASE</a>
+                <a href="/map/map.html" class="nav-btn active">MAP CONSOLE</a>
+                <a href="/trade/trade.html" class="nav-btn">TRADE POST</a>
+                <a href="/comms/comms.html" class="nav-btn">COMMS</a>
+                <a href="/admin/admin.html" class="nav-btn">ADMIN</a>
+            </div>
+            <div class="nav-status">
+                <div class="pulse-dot"></div>
+                <span id="nav-user">AUTHENTICATING...</span>
+            </div>
+        </nav>
         <div id="map-canvas">
             <div class="map-grid"></div> </div>
         
@@ -28,9 +39,11 @@
         </div>
     </div>
 
-    <script src="js/config.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/heatmap.js"></script>
-    <script async src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=visualization&callback=initMap"></script>
+    <script src="/js/config.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/utils.js"></script>
+    <script src="/map/map.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQdaiYnVg_0Lb7dJP35MVQp_EVEoOvFPk&libraries=visualization&callback=initMap" async defer></script>
 </body>
 </html>

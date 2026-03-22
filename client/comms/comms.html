@@ -1,24 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+    <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chat - S.P.A.W.N</title>
 
     <!-- Link to external CSS for styling -->
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <link rel="stylesheet" href="css/nav.css">
-    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="/css/global.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/nav.css">
+    <link rel="stylesheet" href="/css/components.css">
 
-    <link rel="stylesheet" href="css/pages/comms.css">
+    <link rel="stylesheet" href="/css/pages/comms.css">
 
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
-  </head>
-  <body>
+    </head>
+    <body>
     <div id="app">
-        <nav></nav>
+        <nav>
+            <div class="nav-logo">S.P.A.W.N.</div>
+            <div class="nav-links">
+                <a href="/index.html" class="nav-btn">HOME BASE</a>
+                <a href="/map/map.html" class="nav-btn">MAP CONSOLE</a>
+                <a href="/trade/trade.html" class="nav-btn">TRADE POST</a>
+                <a href="/comms/comms.html" class="nav-btn">COMMS</a>
+                <a href="/admin/admin.html" class="nav-btn">ADMIN</a>
+            </div>
+            <div class="nav-status">
+                <div class="pulse-dot"></div>
+                <span id="nav-user">AUTHENTICATING...</span>
+            </div>
+        </nav>
 
         <main class="panel active">
             <div class="panel-header">COMMS — ENCRYPTED CHANNEL</div>
@@ -46,9 +59,10 @@
         </main>
     </div>
 
-    <script src="js/config.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/comms.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-  </body>
+    <script src="/js/config.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/utils.js"></script>
+    <script src="/comms/comms.js"></script>
+    </body>
 </html>

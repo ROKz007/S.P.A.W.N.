@@ -1,55 +1,43 @@
-require('dotenv').config(); 
-const cors = require('cors'); // Add at top
+require('dotenv').config();
 const express = require('express');
-const mysql = require('mysql2'); 
-const bodyParser = require('body-parser');
-const bcrypt = require('bcryptjs'); 
-const jwt = require('jsonwebtoken'); 
-const authMiddleware = require('./middleware/authMiddleware'); // Import Step 3 middleware
-const app = express();
+const { createClient } = require('@supabase/supabase-js');
+const cors = require('cors');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const http = require('http');
 const { Server } = require('socket.io');
-const server = http.createServer(app);
-const io = new Server(server);
-const cron = require('node-cron');
+
+// Middlewares
+const authMiddleware = require('./middleware/authMiddleware');
 const adminMiddleware = require('./middleware/adminMiddleware');
-app.use(cors());              // Add after app = express()
-const path = require('path'); // Add this at the top if not there
 
-// Add these above your standard app.use(express.static(...))
-app.use(express.static(path.join(__dirname, 'map')));
-app.use(express.static(path.join(__dirname, 'trade')));
-app.use(express.static(path.join(__dirname, 'comms')));
-app.use(express.static(path.join(__dirname, 'admin')));
-app.use(express.static(path.join(__dirname, './')));
-app.use(express.static(__dirname));
-const port = process.env.PORT || 3000;
-
-const connection = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME || 'spawn_db'
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: { origin: "*" }
 });
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
+app.use(express.json());
 
-// WebSocket logic
+// 1. Initialize Supabase Client
+const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY // Service role bypasses RLS for server-side logic
+);
+
+// --- WEBSOCKET LOGIC (Real-time Comms) ---
 io.on('connection', (socket) => {
     console.log('New survivor linked to the network');
 
-    // Handle incoming chat messages
     socket.on('send_message', (data) => {
-        // Broadcast to everyone
         io.emit('new_message', {
-            user: data.user,
+            user: data.user || 'ANONYMOUS',
             content: data.content,
             time: new Date().toLocaleTimeString()
         });
     });
 
-    // Handle SOS Beacons
     socket.on('sos_beacon', (data) => {
         io.emit('sos_received', {
             user: data.user,
@@ -58,162 +46,129 @@ io.on('connection', (socket) => {
         });
     });
 
-    socket.on('disconnect', () => {
-        console.log('Survivor unlinked');
-    });
+    socket.on('disconnect', () => console.log('Survivor unlinked'));
 });
 
-// --- AUTHENTICATION ROUTES ---
+// --- AUTHENTICATION ---
 app.post('/api/auth/signup', async (req, res) => {
-  const { callsign, password, region } = req.body;
-  try {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    const query = 'INSERT INTO users (callsign, password_hash, region) VALUES (?, ?, ?)';
+    const { callsign, password, region } = req.body;
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const { data, error } = await supabase
+            .from('users')
+            .insert([{ callsign, password_hash: hashedPassword, region }])
+            .select()
+            .single();
+
+        if (error) throw error;
+
+        const token = jwt.sign(
+            { userId: data.id, callsign, role: data.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+        res.status(201).json({ token, user: data });
+    } catch (err) {
+        res.status(409).json({ error: 'Callsign taken or database error.' });
+    }
+});
+
+app.post('/api/auth/login', async (req, res) => {
+    const { callsign, password } = req.body;
+    try {
+        const { data: user, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('callsign', callsign)
+            .single();
+
+        if (error || !user) return res.status(401).json({ error: 'Invalid credentials.' });
+
+        const isMatch = await bcrypt.compare(password, user.password_hash);
+        if (!isMatch) return res.status(401).json({ error: 'Invalid credentials.' });
+
+        const token = jwt.sign(
+            { userId: user.id, callsign: user.callsign, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+        res.json({ token, user });
+    } catch (err) {
+        res.status(500).json({ error: 'Server error during login.' });
+    }
+});
+
+// --- TRADE ROUTES ---
+app.get('/api/trades', async (req, res) => {
+    const { data, error } = await supabase
+        .from('trades')
+        .select('*')
+        .eq('status', 'open')
+        .order('created_at', { ascending: false });
+
+    if (error) return res.status(500).json({ error: 'DB_ERROR' });
+    res.json(data);
+});
+
+app.post('/api/trades', authMiddleware, async (req, res) => {
+    const { item_name, category, description, contact_info, location } = req.body;
+    const { error } = await supabase
+        .from('trades')
+        .insert([{
+            user_id: req.user.userId,
+            item_name,
+            category,
+            description,
+            contact_info,
+            location
+        }]);
+
+    if (error) return res.status(500).json({ error: 'Failed to post trade.' });
+    res.status(201).json({ message: 'Trade posted.' });
+});
+
+// --- HEATMAP & ADMIN ROUTES ---
+app.get('/api/heatmap', async (req, res) => {
+    const { data, error } = await supabase
+        .from('heatmap_locations')
+        .select('city, latitude, longitude, intensity');
+
+    if (error) return res.status(500).json({ error: 'DB_ERROR' });
+    res.json(data);
+});
+
+app.post('/api/heatmap/inject', authMiddleware, adminMiddleware, async (req, res) => {
+    const { city, intensity } = req.body;
+    const { error } = await supabase
+        .from('heatmap_locations')
+        .update({ intensity })
+        .eq('city', city);
+
+    if (error) return res.status(500).json({ error: 'Update failed' });
+    res.json({ success: true });
+});
+
+app.get('/api/admin/stats', authMiddleware, adminMiddleware, async (req, res) => {
+    const { count: userCount } = await supabase.from('users').select('*', { count: 'exact', head: true });
+    const { count: tradeCount } = await supabase.from('trades').select('*', { count: 'exact', head: true }).eq('status', 'open');
     
-    connection.query(query, [callsign, hashedPassword, region], (err, result) => {
-      if (err) {
-          console.error(err);
-          return res.status(409).json({ error: 'Callsign taken or database error.' });
-      }
-      // Create token
-      const token = jwt.sign(
-          { userId: result.insertId, callsign, role: 'survivor' }, 
-          process.env.JWT_SECRET, 
-          { expiresIn: '24h' }
-      );
-      res.status(201).json({ token, user: { id: result.insertId, callsign, region } });
-    });
-  } catch (error) { 
-    res.status(500).json({ error: 'Server error during encryption.' }); 
-  }
-});
-
-app.post('/api/auth/login', (req, res) => {
-  const { callsign, password } = req.body;
-  const query = 'SELECT * FROM users WHERE callsign = ?';
-  connection.query(query, [callsign], async (err, results) => {
-    if (err || results.length === 0) return res.status(401).json({ error: 'Invalid credentials.' });
-    const user = results[0];
-    const isMatch = await bcrypt.compare(password, user.password_hash);
-    if (!isMatch) return res.status(401).json({ error: 'Invalid credentials.' });
-    const token = jwt.sign({ userId: user.id, callsign: user.callsign, role: user.role }, process.env.JWT_SECRET, { expiresIn: '24h' });
-    res.json({ token, user: { id: user.id, callsign: user.callsign, role: user.role } });
-  });
-});
-
-// --- ADMIN ROUTES ---
-app.get('/api/admin/stats', authMiddleware, adminMiddleware, (req, res) => {
-    const queries = {
-        users: 'SELECT COUNT(*) as count FROM users',
-        trades: 'SELECT COUNT(*) as count FROM trades WHERE status = "open"',
-        reports: 'SELECT COUNT(*) as count FROM hazard_reports WHERE status = "pending"'
-    };
-
-    // Note: For simplicity, this is a nested callback; in production, use PROMISE.ALL
-    connection.query(queries.users, (err, uRes) => {
-        connection.query(queries.trades, (err, tRes) => {
-            connection.query(queries.reports, (err, rRes) => {
-                res.json({
-                    survivorsOnline: uRes[0].count,
-                    activeTrades: tRes[0].count,
-                    pendingThreats: rRes[0].count
-                });
-            });
-        });
+    res.json({
+        survivorsOnline: userCount || 0,
+        activeTrades: tradeCount || 0
     });
 });
-app.post('/api/admin/broadcast', authMiddleware, adminMiddleware, (req, res) => {
-    const { message } = req.body;
-    io.emit('new_message', { 
-        user: 'SYSTEM', 
-        content: `GLOBAL ALERT: ${message}`, 
-        system: true 
-    });
-    res.json({ message: 'Broadcast successful' });
-});
 
-// Server-Side Missing Routes
 app.post('/api/admin/broadcast', authMiddleware, adminMiddleware, (req, res) => {
     const { message } = req.body;
     io.emit('new_message', { user: 'SYSTEM', content: `BROADCAST: ${message}`, system: true });
     res.json({ success: true });
 });
 
-app.post('/api/heatmap/inject', authMiddleware, adminMiddleware, (req, res) => {
-    const { city, intensity } = req.body;
-    const query = 'UPDATE heatmap_locations SET intensity = ? WHERE city = ?';
-    connection.query(query, [intensity, city], (err) => {
-        if (err) return res.status(500).json({ error: 'Update failed' });
-        res.json({ success: true });
-    });
-});
-
-// --- HEATMAP ROUTES ---
-app.get('/api/heatmap', (req, res) => {
-    const query = 'SELECT city, latitude, longitude, intensity FROM heatmap_locations';
-    connection.query(query, (err, results) => {
-        if (err) return res.status(500).json({ error: 'DB_ERROR' });
-        res.json(results);
-    });
-});
-
-// --- TRADE ROUTES ---
-app.get('/api/trades', (req, res) => {
-    const query = 'SELECT * FROM trades WHERE status = "open" ORDER BY created_at DESC';
-    connection.query(query, (err, results) => {
-        if (err) return res.status(500).json({ error: 'DB_ERROR' });
-        res.json(results);
-    });
-});
-
-app.post('/api/trades', authMiddleware, (req, res) => {
-    const { item_name, category, description, contact, location } = req.body;
-    const query = 'INSERT INTO trades (user_id, item_name, category, description, contact, location) VALUES (?, ?, ?, ?, ?, ?)';
-    connection.query(query, [req.user.userId, item_name, category, description, contact, location], (err) => {
-        if (err) return res.status(500).json({ error: 'DB_ERROR' });
-        res.status(201).json({ message: 'Trade posted.' });
-    });
-});
-
-
-// --- CRON JOB: Expire old trades every hour ---
-cron.schedule('0 * * * *', () => {
-    const query = `
-        UPDATE trades 
-        SET status = 'expired' 
-        WHERE status = 'open' AND expires_at < NOW()
-    `;
-    connection.query(query, (err, result) => {
-        if (err) console.error('Error in trade expiry job:', err);
-        else if (result.affectedRows > 0) {
-            console.log(`System: ${result.affectedRows} trades marked as expired.`);
-        }
-    });
-});
-
-// --- HAZARD REPORT ROUTES ---
-app.post('/api/heatmap/report', authMiddleware, (req, res) => {
-    const { city, hazard_type, description } = req.body;
-    const query = 'INSERT INTO hazard_reports (user_id, city, hazard_type, description) VALUES (?, ?, ?, ?)';
-    
-    connection.query(query, [req.user.userId, city, hazard_type, description], (err) => {
-        if (err) return res.status(500).json({ error: 'VALIDATION_ERROR' });
-        res.status(201).json({ message: 'Hazard report submitted for verification.', status: 'pending' });
-    });
-});
-
-// --- Standard ERROR HANDLING ---
+// --- ERROR HANDLING ---
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({
-        error: "INTERNAL_ERROR",
-        message: "An unexpected error occurred in the S.P.A.W.N. network.",
-        statusCode: 500
-    });
+    res.status(500).json({ error: "INTERNAL_ERROR" });
 });
 
-// --- START SERVER ---
-server.listen(port, () => {
-    console.log(`S.P.A.W.N. Command Center online on port ${port}`);
-});
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => console.log(`S.P.A.W.N. Command Center online on port ${PORT}`));
