@@ -41,5 +41,16 @@ function renderThreatBars(data) {
     }).join('');
 }
 
+
+function checkAdminMessages() {
+    const adminMessage = localStorage.getItem('adminMessage');
+    const displayBox = document.getElementById('adminMessageBox');
+    const content = document.getElementById('adminMessageContent');
+
+    if (adminMessage && displayBox && content) {
+        displayBox.style.display = 'block';
+        content.textContent = adminMessage;
+    }
+}
 // Initialize on load
 document.addEventListener('DOMContentLoaded', loadDashboardData);
