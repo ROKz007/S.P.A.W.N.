@@ -19,7 +19,7 @@ async function apiFetch(endpoint, options = {}) {
         if (response.status === 401) {
             sessionStorage.clear();
             if (!window.location.pathname.endsWith('index.html') && window.location.pathname !== '/') {
-                window.location.href = '/client/index.html';
+                window.location.href = '/index.html';
             }
             throw new Error("Unauthorized");
         }

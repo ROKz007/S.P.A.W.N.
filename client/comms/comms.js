@@ -1,16 +1,16 @@
 /* js/comms.js */
 
 // 1. Initialize Socket.IO with Auth Token
+const user = JSON.parse(sessionStorage.getItem(CONFIG.USER_KEY));
 const socket = io(CONFIG.SOCKET_URL, {
     auth: { token: sessionStorage.getItem(CONFIG.TOKEN_KEY) }
 });
 
 const chatContainer = document.getElementById('chat-messages');
-const user = JSON.parse(sessionStorage.getItem(CONFIG.USER_KEY));
 
 // 2. Receive Messages
 socket.on('new_message', (msg) => {
-    const isMine = msg.user === user.callsign;
+    const isMine = user && msg.user === user.callsign;
     renderMessage(msg, isMine);
 });
 
@@ -40,6 +40,10 @@ function sendMsg() {
 
 // 5. SOS Beacon
 function triggerSOS() {
+    if (!user) {
+        alert('ERROR: User not authenticated');
+        return;
+    }
     const confirmSOS = confirm("BROADCAST EMERGENCY BEACON TO ALL SURVIVORS?");
     if (confirmSOS) {
         socket.emit('sos_beacon', { 

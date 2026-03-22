@@ -19,6 +19,7 @@ const io = new Server(server, {
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static('client')); // Serve static client files
 
 // 1. Initialize Supabase Client
 const supabase = createClient(
@@ -149,13 +150,20 @@ app.post('/api/heatmap/inject', authMiddleware, adminMiddleware, async (req, res
 });
 
 app.get('/api/admin/stats', authMiddleware, adminMiddleware, async (req, res) => {
-    const { count: userCount } = await supabase.from('users').select('*', { count: 'exact', head: true });
-    const { count: tradeCount } = await supabase.from('trades').select('*', { count: 'exact', head: true }).eq('status', 'open');
-    
-    res.json({
-        survivorsOnline: userCount || 0,
-        activeTrades: tradeCount || 0
-    });
+    try {
+        const { count: userCount, error: userError } = await supabase.from('users').select('*', { count: 'exact', head: true });
+        const { count: tradeCount, error: tradeError } = await supabase.from('trades').select('*', { count: 'exact', head: true }).eq('status', 'open');
+        
+        if (userError || tradeError) throw new Error('Failed to fetch stats');
+        
+        res.json({
+            survivorsOnline: userCount || 0,
+            activeTrades: tradeCount || 0
+        });
+    } catch (err) {
+        console.error('Stats error:', err);
+        res.status(500).json({ error: 'Failed to fetch stats', survivorsOnline: 0, activeTrades: 0 });
+    }
 });
 
 app.post('/api/admin/broadcast', authMiddleware, adminMiddleware, (req, res) => {
