@@ -26,22 +26,22 @@ Required variables (see `.env.example`):
 
 ## Deployment
 
-Backend (Render):
+Backend (Railway / Render):
 
-- Host the backend (the contents of this repo's `server/`) on Render or another host that supports persistent sockets.
-- Required Env Vars for the Backend on Render:
+- Host the backend (the contents of this repo's `server/`) on Railway, Render, or another host that supports persistent sockets.
+- Required Env Vars for the Backend on Railway/Render:
 	- `SUPABASE_URL`
 	- `SUPABASE_SERVICE_ROLE_KEY`
 	- `JWT_SECRET`
-	- `ENABLE_SOCKETS` — set to `true` on Render
+	- `ENABLE_SOCKETS` — set to `true` on the backend host
 	- `FRONTEND_URL` — set this to your Vercel URL (e.g., `https://your-app.vercel.app`) to allow CORS from the frontend
 
 Frontend (Vercel):
 
-- Deploy only the `client/` folder as a static site to Vercel. Ensure the built `client/js/config.js` points to your Render backend URL (see `SPAWN_BACKEND_URL` note in `client/js/config.js`).
+- Deploy only the `client/` folder as a static site to Vercel. Ensure the built `client/js/config.js` points to your backend URL (see `SPAWN_BACKEND_URL` note in `client/js/config.js`).
 - The Frontend does not require server-side secrets; it only needs the static `client` files uploaded.
 
 Notes:
 
-- After deploying the backend to Render, set `FRONTEND_URL` on the Render service to your Vercel URL so the backend's CORS allow list permits requests from the frontend.
+- After deploying the backend, set `FRONTEND_URL` on the backend service to your Vercel URL so the backend's CORS allow list permits requests from the frontend.
 - Ensure `SUPABASE_SERVICE_ROLE_KEY` remains secret and is only set on the backend host.

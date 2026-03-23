@@ -1,13 +1,13 @@
 /* client/js/config.js */
 /*
   CONFIG.js
-  Backend URLs default to the Render service root below. If you deploy the backend to
-  Render under a different URL, update the `SPAWN_BACKEND_URL` global or rebuild
-  the static site so the `API_BASE` and `SOCKET_URL` point to the Render service URL.
+  Backend URLs default to the deployed backend service root below. If you deploy the backend
+  to a different host (Railway, Render, etc.), update the `SPAWN_BACKEND_URL` global or
+  rebuild the static site so the `API_BASE` and `SOCKET_URL` point to your backend service URL.
 */
 const BACKEND_ROOT = (typeof window !== 'undefined' && window.SPAWN_BACKEND_URL)
   ? window.SPAWN_BACKEND_URL
-  : 'https://spawn-production.up.railway.apps'; // <-- Replace with your Render service URL
+  : 'https://spawn-production.up.railway.app'; // <-- Your Railway backend URL
 
 const CONFIG = {
   // API and socket endpoints (must match your Render service URL)
