@@ -10,26 +10,18 @@ const adminMiddleware = require('./middleware/adminMiddleware');
 function createApp() {
     const app = express();
 
-    // Allow list for CORS: local dev and the Vercel front-end URL (provided via FRONTEND_URL).
+    // CORS: allow local development and the configured frontend host
     const allowedOrigins = [
         'http://localhost:3000',
         'http://127.0.0.1:3000'
     ];
-    if (process.env.FRONTEND_URL) {
-        allowedOrigins.push(process.env.FRONTEND_URL);
-    } else {
-        // Placeholder Vercel URL for local reference — replace with your real Vercel URL in production.
-        allowedOrigins.push('https://spawn-frontend.vercel.app');
-    }
+    if (process.env.FRONTEND_URL) allowedOrigins.push(process.env.FRONTEND_URL);
     app.use(cors({ origin: allowedOrigins }));
     app.use(express.json());
     app.use(express.static('client'));
 
-    // Initialize Supabase Client (server code expects service role key)
-    const supabase = createClient(
-        process.env.SUPABASE_URL,
-        process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
+    // Initialize Supabase client (server requires service role key)
+    const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
     // --- AUTH ---
     app.post('/api/auth/signup', async (req, res) => {
