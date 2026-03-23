@@ -7,7 +7,7 @@
 */
 const BACKEND_ROOT = (typeof window !== 'undefined' && window.SPAWN_BACKEND_URL)
   ? window.SPAWN_BACKEND_URL
-  : 'https://spawn-backend.onrender.com'; // <-- Replace with your Render service URL
+  : 'https://spawn-production.up.railway.apps'; // <-- Replace with your Render service URL
 
 const CONFIG = {
   // API and socket endpoints (must match your Render service URL)
