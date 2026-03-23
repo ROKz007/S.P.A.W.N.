@@ -6,13 +6,11 @@
     <title>Chat - S.P.A.W.N</title>
 
     <!-- Link to external CSS for styling -->
-    <link rel="stylesheet" href="/client/css/global.css">
-    <link rel="stylesheet" href="/client/css/animations.css">
-    <link rel="stylesheet" href="/client/css/nav.css">
-    <link rel="stylesheet" href="/client/css/components.css">
-    <link rel="stylesheet" href="/client/css/pages/comms.css">
-
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <link rel="stylesheet" href="/css/global.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/nav.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/pages/comms.css">
 
     </head>
     <body>
@@ -20,11 +18,11 @@
         <nav>
             <div class="nav-logo">S.P.A.W.N.</div>
             <div class="nav-links">
-                <a href="/client/index.html" class="nav-btn">HOME BASE</a>
-                <a href="/client/map/map.html" class="nav-btn">MAP CONSOLE</a>
-                <a href="/client/trade/trade.html" class="nav-btn">TRADE POST</a>
-                <a href="/client/comms/comms.html" class="nav-btn">COMMS</a>
-                <a href="/client/admin/admin.html" class="nav-btn">ADMIN</a>
+                <a href="/index.html" class="nav-btn">HOME BASE</a>
+                <a href="/map/map.html" class="nav-btn">MAP CONSOLE</a>
+                <a href="/trade/trade.html" class="nav-btn">TRADE POST</a>
+                <a href="/comms/comms.html" class="nav-btn active">COMMS</a>
+                <a href="/admin/admin.html" class="nav-btn">ADMIN</a>
             </div>
             <div class="nav-status">
                 <div class="pulse-dot"></div>
@@ -58,10 +56,44 @@
         </main>
     </div>
 
-    <script src="/client/js/config.js"></script>
-    <script src="/client/js/auth.js"></script>
-    <script src="/client/js/api.js"></script>
-    <script src="/client/js/utils.js"></script>
-    <script src="/client/comms/comms.js"></script>
+    <script src="/js/config.js"></script>
+    <script>
+        // Conditionally load socket.io client only when sockets are enabled in CONFIG
+        (function(){
+            function loadSocketIo() {
+                const s = document.createElement('script');
+                s.src = 'https://cdn.socket.io/4.7.2/socket.io.min.js';
+                s.async = true;
+                s.onload = function(){ console.log('Socket.IO client loaded'); };
+                document.body.appendChild(s);
+            }
+
+            // Wait for CONFIG to be available
+            const waitForConfig = () => {
+                if (window.CONFIG) {
+                    if (CONFIG.ENABLE_SOCKETS) loadSocketIo();
+                    else console.info('Sockets disabled by CONFIG.ENABLE_SOCKETS');
+                } else setTimeout(waitForConfig, 50);
+            };
+            waitForConfig();
+        })();
+    </script>
+    <script>
+        // Display user callsign once config loads
+        setTimeout(() => {
+            const user = sessionStorage.getItem(CONFIG.USER_KEY);
+            if (user) {
+                try {
+                    const userData = JSON.parse(user);
+                    const navUser = document.getElementById('nav-user');
+                    if (navUser) navUser.textContent = userData.callsign;
+                } catch (e) {}
+            }
+        }, 50);
+    </script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/utils.js"></script>
+    <script src="/comms/comms.js"></script>
     </body>
 </html>

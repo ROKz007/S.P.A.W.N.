@@ -8,11 +8,47 @@ function initAuth() {
     const authForm = document.getElementById('auth-form');
     if (!authForm) return;
 
+    // Animate boot screen
+    const bootBar = document.getElementById('boot-bar');
+    const bootLog = document.getElementById('boot-log');
+    
+    if (bootBar) {
+        let progress = 0;
+        const bootInterval = setInterval(() => {
+            progress += Math.random() * 30;
+            if (progress > 100) progress = 100;
+            bootBar.style.width = progress + '%';
+            
+            if (progress === 100) clearInterval(bootInterval);
+        }, 200);
+    }
+
+    if (bootLog) {
+        const messages = [
+            '// INITIALIZING NETWORK',
+            '// LOADING PROTOCOLS',
+            '// CONNECTING TO COMMAND CENTER',
+            '// SYNCHRONIZING DATABASES',
+            '// READY FOR OPERATIONS'
+        ];
+        let msgIndex = 0;
+        const msgInterval = setInterval(() => {
+            if (msgIndex < messages.length) {
+                const msg = document.createElement('div');
+                msg.textContent = messages[msgIndex];
+                bootLog.appendChild(msg);
+                msgIndex++;
+            } else {
+                clearInterval(msgInterval);
+            }
+        }, 400);
+    }
+
     // Inject the terminal-style UI
     authForm.innerHTML = `
         <div class="auth-tabs">
-            <button class="auth-tab active" onclick="switchAuth('login')">LOGIN</button>
-            <button class="auth-tab" onclick="switchAuth('signup')">ENLIST</button>
+            <button class="auth-tab active" onclick="switchAuth('login', event)">LOGIN</button>
+            <button class="auth-tab" onclick="switchAuth('signup', event)">ENLIST</button>
         </div>
         
         <div id="auth-form-login" class="auth-fields" style="display: flex; flex-direction: column; gap: 10px;">
@@ -44,9 +80,11 @@ function initAuth() {
         if (bootScreen) bootScreen.style.display = 'none';
 
         if (token) {
-            app.style.display = 'block';
+            if (app) app.style.display = 'block';
             const user = JSON.parse(sessionStorage.getItem(CONFIG.USER_KEY));
-            document.getElementById('nav-user').textContent = user.callsign;
+            if (document.getElementById('nav-user')) {
+                document.getElementById('nav-user').textContent = user.callsign;
+            }
         } else {
             if (authOverlay) authOverlay.style.display = 'flex';
         }
@@ -56,13 +94,13 @@ function initAuth() {
 /**
  * 2. FORM INTERACTION
  */
-function switchAuth(tab) {
+function switchAuth(tab, ev) {
     const loginForm = document.getElementById('auth-form-login');
     const signupForm = document.getElementById('auth-form-signup');
     const tabs = document.querySelectorAll('.auth-tab');
 
     tabs.forEach(t => t.classList.remove('active'));
-    event.target.classList.add('active');
+    if (ev && ev.target) ev.target.classList.add('active');
 
     if (tab === 'login') {
         loginForm.style.display = 'flex';
@@ -126,4 +164,36 @@ function showAuthError(msg) {
 }
 
 // Run on load
-document.addEventListener('DOMContentLoaded', initAuth);
+function initPageDisplay() {
+    const app = document.getElementById('app');
+    if (!app) return;
+
+    const token = (typeof CONFIG !== 'undefined' && CONFIG.TOKEN_KEY)
+        ? sessionStorage.getItem(CONFIG.TOKEN_KEY)
+        : sessionStorage.getItem('spawn_token');
+
+    const path = window.location.pathname.toLowerCase();
+
+    if (!token) {
+        // If user is on index, let initAuth show the auth overlay.
+        if (path === '/' || path.endsWith('/index.html')) {
+            app.style.display = 'none';
+        } else {
+            // For other pages, redirect to index/login so user can authenticate.
+            window.location.href = '/index.html';
+        }
+    } else {
+        app.style.display = 'block';
+        try {
+            const user = JSON.parse(sessionStorage.getItem(CONFIG.USER_KEY) || 'null');
+            if (user && document.getElementById('nav-user')) document.getElementById('nav-user').textContent = user.callsign;
+        } catch (e) {
+            /* ignore json errors */
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initPageDisplay();
+    initAuth();
+});

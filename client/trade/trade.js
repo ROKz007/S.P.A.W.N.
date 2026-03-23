@@ -28,9 +28,9 @@ function renderTrades(trades) {
 }
 
 // 3. Filter by category
-function filterTrades(category) {
+function filterTrades(category, ev) {
     document.querySelectorAll('.trade-tab').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
+    if (ev && ev.target) ev.target.classList.add('active');
 
     if (category === 'all') {
         renderTrades(allTrades);
