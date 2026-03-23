@@ -6,11 +6,11 @@ const { createApp } = require('./app');
 let server = null;
 let io = null;
 
-// Feature flag: enable sockets when ENABLE_SOCKETS env var is 'true',
-// or by default during non-production (development) runs.
-const ENABLE_SOCKETS = process.env.ENABLE_SOCKETS
+// Feature flag: enable sockets when ENABLE_SOCKETS env var is set to 'true'.
+// When not specified, default to true because Render supports persistent sockets.
+const ENABLE_SOCKETS = typeof process.env.ENABLE_SOCKETS !== 'undefined'
     ? process.env.ENABLE_SOCKETS === 'true'
-    : (process.env.NODE_ENV !== 'production');
+    : true;
 
 // Create express app instance (routes are configured inside createApp)
 const app = createApp();

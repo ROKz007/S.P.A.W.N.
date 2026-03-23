@@ -10,7 +10,13 @@ const adminMiddleware = require('./middleware/adminMiddleware');
 function createApp() {
     const app = express();
 
-    app.use(cors());
+    // Allow list for CORS: local dev and the future Vercel front-end URL.
+    const allowedOrigins = [
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+        process.env.FRONTEND_URL || 'https://spawn-frontend.vercel.app'
+    ];
+    app.use(cors({ origin: allowedOrigins }));
     app.use(express.json());
     app.use(express.static('client'));
 
