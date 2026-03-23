@@ -30,19 +30,37 @@ window.initMap = function initMap() {
     }
     // Leaflet provider
     if (_hasLeaflet()) {
-        // Create Leaflet map
+        // Create Leaflet map constrained to Odisha bounds
         const mapEl = document.getElementById('map-canvas');
-        // Ensure container has size
         mapEl.style.height = mapEl.style.height || '600px';
 
-        map = L.map('map-canvas', { zoomControl: false }).setView([center.lat, center.lng], 7);
+        // Approximate Odisha bounds (lat,lng): SW, NE
+        const ODISHA_BOUNDS = [[17.4, 80.9], [22.9, 87.9]];
+
+        map = L.map('map-canvas', { zoomControl: false, maxBounds: ODISHA_BOUNDS, maxBoundsViscosity: 0.8 })
+            .setView([center.lat, center.lng], 7);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
         apiFetch('/heatmap')
-            .then(data => renderHeatmap(data))
+            .then(data => {
+                // Filter points to those within Odisha bounds just in case
+                const filtered = data.filter(p => {
+                    const lat = parseFloat(p.latitude);
+                    const lng = parseFloat(p.longitude);
+                    return lat >= ODISHA_BOUNDS[0][0] && lat <= ODISHA_BOUNDS[1][0]
+                        && lng >= ODISHA_BOUNDS[0][1] && lng <= ODISHA_BOUNDS[1][1];
+                });
+                if (filtered.length) {
+                    renderHeatmap(filtered);
+                    // Fit to Odisha bounds so map shows state area only
+                    try { map.fitBounds(ODISHA_BOUNDS, { padding: [20,20] }); } catch (e) {}
+                } else {
+                    renderHeatmap(data);
+                }
+            })
             .catch(err => console.error('Failed to load heatmap data:', err));
 
         return;
@@ -82,6 +100,20 @@ function renderHeatmap(points) {
         '#f8d000',
         '#ff4d4d'
     ];
+    // Leaflet branch (handle at runtime even if plugin loaded after this script)
+    if (_hasLeaflet() && typeof L.heatLayer === 'function') {
+        const latlngs = points.map(p => [parseFloat(p.latitude), parseFloat(p.longitude), parseFloat(p.intensity) || 0.5]);
+        if (!map) {
+            console.warn('Leaflet map instance not found while rendering heatmap.');
+            return;
+        }
+        if (heatmap && heatmap.setLatLngs) {
+            heatmap.setLatLngs(latlngs);
+        } else {
+            heatmap = L.heatLayer(latlngs, { radius: 25, blur: 15, maxZoom: 11, max: 1.0 }).addTo(map);
+        }
+        return;
+    }
 
     if (_hasGoogleMaps()) {
         const weightedData = points.map(p => ({
@@ -112,20 +144,4 @@ function renderHeatmap(points) {
     console.warn('Heatmap render skipped — no map provider available.');
 }
 
-// Leaflet heatmap rendering
-if (_hasLeaflet()) {
-    // override renderHeatmap to use Leaflet if available
-    const originalRender = renderHeatmap;
-    renderHeatmap = function(points) {
-        if (_hasLeaflet()) {
-            const latlngs = points.map(p => [parseFloat(p.latitude), parseFloat(p.longitude), parseFloat(p.intensity) || 0.5]);
-            if (heatmap && heatmap.setLatLngs) {
-                heatmap.setLatLngs(latlngs);
-            } else {
-                heatmap = L.heatLayer(latlngs, { radius: 25, blur: 15, maxZoom: 11, max: 1.0 }).addTo(map);
-            }
-            return;
-        }
-        originalRender(points);
-    };
-}
+// No additional overrides required; renderHeatmap handles Leaflet at runtime.

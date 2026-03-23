@@ -7,41 +7,64 @@
 function initAuth() {
     const authForm = document.getElementById('auth-form');
     if (!authForm) return;
+    // If we've already completed the boot sequence this session, skip animations
+    // But always run boot when the navigation type is a full reload.
+    let bootDone = sessionStorage.getItem('spawn_boot_done') === 'true';
+    try {
+        const navEntries = performance.getEntriesByType && performance.getEntriesByType('navigation');
+        const navType = (navEntries && navEntries[0] && navEntries[0].type) || (performance.navigation && performance.navigation.type);
+        // If this load was triggered by a reload, we want to show boot again.
+        if (navType === 'reload' || navType === 1) {
+            bootDone = false;
+            sessionStorage.removeItem('spawn_boot_done');
+        }
+    } catch (e) {
+        // ignore
+    }
+    if (bootDone) {
+        const bootScreen = document.getElementById('boot-screen');
+        if (bootScreen) bootScreen.style.display = 'none';
+    }
 
     // Animate boot screen
     const bootBar = document.getElementById('boot-bar');
     const bootLog = document.getElementById('boot-log');
     
     if (bootBar) {
-        let progress = 0;
-        const bootInterval = setInterval(() => {
-            progress += Math.random() * 30;
-            if (progress > 100) progress = 100;
-            bootBar.style.width = progress + '%';
-            
-            if (progress === 100) clearInterval(bootInterval);
-        }, 200);
+        if (!bootDone) {
+            let progress = 0;
+            const bootInterval = setInterval(() => {
+                progress += Math.random() * 30;
+                if (progress > 100) progress = 100;
+                bootBar.style.width = progress + '%';
+                if (progress === 100) clearInterval(bootInterval);
+            }, 200);
+        } else {
+            bootBar.style.width = '100%';
+        }
     }
 
     if (bootLog) {
-        const messages = [
-            '// INITIALIZING NETWORK',
-            '// LOADING PROTOCOLS',
-            '// CONNECTING TO COMMAND CENTER',
-            '// SYNCHRONIZING DATABASES',
-            '// READY FOR OPERATIONS'
-        ];
-        let msgIndex = 0;
-        const msgInterval = setInterval(() => {
-            if (msgIndex < messages.length) {
-                const msg = document.createElement('div');
-                msg.textContent = messages[msgIndex];
-                bootLog.appendChild(msg);
-                msgIndex++;
-            } else {
-                clearInterval(msgInterval);
-            }
-        }, 400);
+        if (!bootDone) {
+            const messages = [
+                '// INITIALIZING NETWORK',
+                '// LOADING PROTOCOLS',
+                '// CONNECTING TO COMMAND CENTER',
+                '// SYNCHRONIZING DATABASES',
+                '// READY FOR OPERATIONS'
+            ];
+            let msgIndex = 0;
+            const msgInterval = setInterval(() => {
+                if (msgIndex < messages.length) {
+                    const msg = document.createElement('div');
+                    msg.textContent = messages[msgIndex];
+                    bootLog.appendChild(msg);
+                    msgIndex++;
+                } else {
+                    clearInterval(msgInterval);
+                }
+            }, 400);
+        }
     }
 
     // Inject the terminal-style UI
@@ -78,6 +101,9 @@ function initAuth() {
         const app = document.getElementById('app');
 
         if (bootScreen) bootScreen.style.display = 'none';
+
+        // Mark that boot sequence ran so subsequent navigations in this session skip it
+        sessionStorage.setItem('spawn_boot_done', 'true');
 
         if (token) {
             if (app) app.style.display = 'block';
