@@ -1,10 +1,17 @@
 {
   "version": 2,
   "builds": [
-    { "src": "client/**", "use": "@vercel/static" }
+    { "src": "client/**", "use": "@vercel/static" },
+    { "src": "map/**", "use": "@vercel/static" },
+    { "src": "trade/**", "use": "@vercel/static" },
+    { "src": "admin/**", "use": "@vercel/static" },
+    { "src": "assets/**", "use": "@vercel/static" },
+    { "src": "comms/**", "use": "@vercel/static" }
   ],
   "routes": [
-    { "src": "(.*)", "dest": "client/$1" }
+    { "handle": "filesystem" },
+    { "src": "(.*)", "dest": "client/$1" },
+    { "src": "/.*", "dest": "client/index.html" }
   ],
   "cleanUrls": true
 }
