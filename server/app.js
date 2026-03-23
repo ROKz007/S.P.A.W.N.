@@ -10,12 +10,17 @@ const adminMiddleware = require('./middleware/adminMiddleware');
 function createApp() {
     const app = express();
 
-    // Allow list for CORS: local dev and the future Vercel front-end URL.
+    // Allow list for CORS: local dev and the Vercel front-end URL (provided via FRONTEND_URL).
     const allowedOrigins = [
         'http://localhost:3000',
-        'http://127.0.0.1:3000',
-        process.env.FRONTEND_URL || 'https://spawn-frontend.vercel.app'
+        'http://127.0.0.1:3000'
     ];
+    if (process.env.FRONTEND_URL) {
+        allowedOrigins.push(process.env.FRONTEND_URL);
+    } else {
+        // Placeholder Vercel URL for local reference — replace with your real Vercel URL in production.
+        allowedOrigins.push('https://spawn-frontend.vercel.app');
+    }
     app.use(cors({ origin: allowedOrigins }));
     app.use(express.json());
     app.use(express.static('client'));

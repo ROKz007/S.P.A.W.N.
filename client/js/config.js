@@ -1,10 +1,18 @@
 /* client/js/config.js */
-const CONFIG = {
-  // Backend API base (Render-hosted backend placeholder)
-  API_BASE: 'https://spawn-backend.onrender.com/api',
+/*
+  CONFIG.js
+  Backend URLs default to the Render service root below. If you deploy the backend to
+  Render under a different URL, update the `SPAWN_BACKEND_URL` global or rebuild
+  the static site so the `API_BASE` and `SOCKET_URL` point to the Render service URL.
+*/
+const BACKEND_ROOT = (typeof window !== 'undefined' && window.SPAWN_BACKEND_URL)
+  ? window.SPAWN_BACKEND_URL
+  : 'https://spawn-backend.onrender.com'; // <-- Replace with your Render service URL
 
-  // Socket server root (Render-hosted root)
-  SOCKET_URL: 'https://spawn-backend.onrender.com',
+const CONFIG = {
+  // API and socket endpoints (must match your Render service URL)
+  API_BASE: BACKEND_ROOT + '/api',
+  SOCKET_URL: BACKEND_ROOT,
 
   TOKEN_KEY: 'spawn_token',
   USER_KEY: 'spawn_user',
