@@ -9,6 +9,11 @@ function initComms() {
         setTimeout(initComms, 100);
         return;
     }
+    if (typeof window.io === 'undefined') {
+        // Wait for socket.io client to finish loading
+        setTimeout(initComms, 100);
+        return;
+    }
     // Respect feature flag: do nothing if sockets are disabled
     if (!CONFIG.ENABLE_SOCKETS) {
         const chatContainer = document.getElementById('chat-messages');
@@ -145,7 +150,8 @@ function renderMessage(msg, isMine) {
 
     const textEl = document.createElement('div');
     textEl.className = 'msg-text';
-    textEl.textContent = msg.content || '';
+    const caller = msg.user || 'SYSTEM';
+    textEl.textContent = `=> ${caller} - ${msg.content || ''}`;
 
     contentWrap.appendChild(userEl);
     contentWrap.appendChild(textEl);

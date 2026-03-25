@@ -33,7 +33,7 @@
 
 <div id="app" style="display:none">
   <nav>
-    <div class="nav-logo">S.P.A.W.N.</div>
+    <a href="/index.html" class="nav-logo nav-logo-link">S.P.A.W.N.</a>
     <div class="nav-links">
       <a href="/index.html" class="nav-btn active">HOME BASE</a>
       <a href="/map/map.html" class="nav-btn">MAP CONSOLE</a>
@@ -43,7 +43,12 @@
     </div>
     <div class="nav-status">
       <div class="pulse-dot"></div>
-      <span id="nav-user">AUTHENTICATING...</span>
+      <button id="nav-user-btn" class="nav-user-btn">AUTHENTICATING...</button>
+      <div id="nav-user-menu" class="nav-user-menu">
+        <button data-action="change-location">Change Location</button>
+        <button data-action="my-trades">My Trade Listings</button>
+        <button data-action="logout">Log Out</button>
+      </div>
     </div>
   </nav>
 
@@ -76,9 +81,13 @@
     <script src="/js/config.js"></script>
     <script src="/js/utils.js"></script>
     <script src="/js/api.js"></script>
-
     <script src="/js/auth.js"></script>
     <script src="/js/dashboard.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        if (typeof initNavProfile === 'function') initNavProfile();
+      });
+    </script>
 
 </body>
 </html>

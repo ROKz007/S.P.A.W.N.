@@ -155,3 +155,5 @@ function enforceAdminVisibility() {
 // Run enforcement on DOM ready and again shortly after auth initialization
 document.addEventListener('DOMContentLoaded', enforceAdminVisibility);
 setTimeout(enforceAdminVisibility, 600);
+// Run a few more times to catch late auth population
+[1200, 2500].forEach(t => setTimeout(enforceAdminVisibility, t));

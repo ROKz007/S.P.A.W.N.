@@ -10,8 +10,10 @@ async function broadcastMsg() {
             method: 'POST',
             body: JSON.stringify({ message })
         });
-        
         document.getElementById('admin-msg-input').value = '';
+
+        // Persist locally so dashboards can reflect immediately
+        try { localStorage.setItem('adminMessage', message); } catch (e) {}
         alert("BROADCAST SENT: All survivor tickers updated.");
     } catch (err) {
         alert("AUTHORIZATION ERROR: Admin credentials required.");
