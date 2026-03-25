@@ -154,3 +154,33 @@
     min-height: 100vh;
     background: var(--dark);
 }
+
+/* Modern form controls (applies to trade, comms, admin inputs) */
+input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]), select, textarea, .chat-input {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.08));
+    border: 1px solid rgba(255,255,255,0.04);
+    color: var(--text);
+    padding: 10px 14px;
+    border-radius: 10px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.02), 0 6px 18px rgba(0,0,0,0.6);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    outline: none;
+    transition: all 0.18s ease;
+}
+
+textarea { resize: vertical; min-height: 64px; }
+
+input[type="text"]:focus, input[type="password"]:focus, select:focus, textarea:focus, .chat-input:focus {
+    transform: translateY(-1px);
+    border-color: var(--rust);
+    box-shadow: 0 8px 28px rgba(255,77,77,0.08), inset 0 1px 0 rgba(255,255,255,0.02);
+}
+
+/* Chat input + send button alignment */
+.chat-input { flex: 1; margin-right: 8px; }
+.chat-send { padding: 10px 16px; border-radius: 8px; }
+
+/* Form groups spacing (modern) */
+.form-group label { display:block; font-size:11px; color:var(--text-dim); margin-bottom:6px; }
+.form-grid .form-group { margin-bottom:12px; }

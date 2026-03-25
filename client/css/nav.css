@@ -50,7 +50,52 @@ nav {
   gap: 8px;
   font-size: 11px;
   color: var(--green);
+  position: relative;
 }
+
+.nav-user-btn {
+  background: none;
+  border: none;
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+
+.nav-user-btn:hover { background: rgba(255,255,255,0.05); }
+
+.nav-user-menu {
+  position: absolute;
+  top: 36px;
+  right: 0;
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+  min-width: 180px;
+  display: none;
+  flex-direction: column;
+  z-index: 120;
+}
+
+.nav-user-menu.open { display: flex; }
+
+.nav-user-menu button {
+  background: none;
+  border: none;
+  color: var(--text);
+  text-align: left;
+  padding: 10px 12px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.nav-user-menu button:last-child { border-bottom: none; }
+.nav-user-menu button:hover { background: rgba(255,255,255,0.06); }
 
 .pulse-dot {
   width: 8px; height: 8px;

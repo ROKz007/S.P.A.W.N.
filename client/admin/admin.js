@@ -47,3 +47,22 @@ function updateAdminLog(city, intensity) {
     
     log.insertBefore(entry, log.firstChild);
 }
+
+// Populate admin city dropdown from heatmap_locations
+async function populateAdminCities() {
+    try {
+        const select = document.getElementById('admin-city');
+        if (!select) return;
+        const data = await apiFetch('/heatmap');
+        const cities = Array.from(new Set((data || []).map(p => p.city))).filter(Boolean).sort();
+        if (!cities.length) return;
+        select.innerHTML = cities.map(c => `<option value="${c}">${c}</option>`).join('');
+    } catch (e) {
+        // leave defaults on failure
+    }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    populateAdminCities();
+});

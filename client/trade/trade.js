@@ -5,7 +5,20 @@ let allTrades = [];
 async function fetchTrades() {
     try {
         allTrades = await apiFetch('/trades');
-        renderTrades(allTrades);
+        const params = new URLSearchParams(window.location.search);
+        const mine = params.get('mine');
+        if (mine) {
+            const userStr = sessionStorage.getItem(CONFIG.USER_KEY);
+            const me = userStr ? JSON.parse(userStr) : null;
+            if (me && me.id) {
+                const filtered = allTrades.filter(t => t.user_id === me.id);
+                renderTrades(filtered);
+            } else {
+                renderTrades(allTrades);
+            }
+        } else {
+            renderTrades(allTrades);
+        }
     } catch (err) {
         console.error("Failed to load trades:", err);
     }

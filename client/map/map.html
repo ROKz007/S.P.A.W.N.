@@ -17,7 +17,7 @@
 <body>
     <div id="app">
         <nav>
-            <div class="nav-logo">S.P.A.W.N.</div>
+            <a href="/index.html" class="nav-logo nav-logo-link">S.P.A.W.N.</a>
             <div class="nav-links">
                 <a href="/index.html" class="nav-btn">HOME BASE</a>
                 <a href="/map/map.html" class="nav-btn active">MAP CONSOLE</a>
@@ -27,7 +27,12 @@
             </div>
             <div class="nav-status">
                 <div class="pulse-dot"></div>
-                <span id="nav-user">AUTHENTICATING...</span>
+                <button id="nav-user-btn" class="nav-user-btn">AUTHENTICATING...</button>
+                <div id="nav-user-menu" class="nav-user-menu">
+                    <button data-action="change-location">Change Location</button>
+                    <button data-action="my-trades">My Trade Listings</button>
+                    <button data-action="logout">Log Out</button>
+                </div>
             </div>
         </nav>
         <div id="map-canvas">
@@ -40,22 +45,16 @@
         </div>
     </div>
     <script src="/js/config.js"></script>
-    <script>
-        // Display user callsign once config loads
-        setTimeout(() => {
-            const user = sessionStorage.getItem(CONFIG.USER_KEY);
-            if (user) {
-                try {
-                    const userData = JSON.parse(user);
-                    const navUser = document.getElementById('nav-user');
-                    if (navUser) navUser.textContent = userData.callsign;
-                } catch (e) {}
-            }
-        }, 50);
-    </script>
     <script src="/js/auth.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/utils.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof initNavProfile === 'function') {
+                initNavProfile();
+            }
+        });
+    </script>
     <script src="/map/map.js"></script>
     <script>
         // Map API loader: set CONFIG.MAP_API_SCRIPT_URL in client/js/config.js

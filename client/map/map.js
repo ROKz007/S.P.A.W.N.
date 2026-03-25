@@ -1,5 +1,7 @@
 /* js/heatmap.js */
 let map, heatmap;
+let latestHeatmapPoints = [];
+let sosMarkers = [];
 
 function _hasGoogleMaps() {
     return typeof google !== 'undefined' && google.maps;
@@ -47,6 +49,7 @@ window.initMap = function initMap() {
         apiFetch('/heatmap')
             .then(data => {
                 // Filter points to those within Odisha bounds just in case
+                latestHeatmapPoints = data || [];
                 const filtered = data.filter(p => {
                     const lat = parseFloat(p.latitude);
                     const lng = parseFloat(p.longitude);
@@ -107,6 +110,8 @@ function renderHeatmap(points) {
             console.warn('Leaflet map instance not found while rendering heatmap.');
             return;
         }
+        // keep copy
+        latestHeatmapPoints = points || latestHeatmapPoints;
         if (heatmap && heatmap.setLatLngs) {
             heatmap.setLatLngs(latlngs);
         } else {
@@ -120,6 +125,9 @@ function renderHeatmap(points) {
             location: new google.maps.LatLng(p.latitude, p.longitude),
             weight: parseFloat(p.intensity)
         }));
+
+        // keep copy
+        latestHeatmapPoints = points || latestHeatmapPoints;
 
         heatmap = new google.maps.visualization.HeatmapLayer({
             data: weightedData,
@@ -143,5 +151,42 @@ function renderHeatmap(points) {
 
     console.warn('Heatmap render skipped — no map provider available.');
 }
+
+// Show an SOS marker on the map using the latest heatmap points as a city->coords lookup.
+window.showSOSOnMap = function showSOSOnMap(city, user) {
+    if (!city || !map) return;
+    // find a point matching city (case-insensitive)
+    const point = latestHeatmapPoints.find(p => (p.city || '').toLowerCase() === (city || '').toLowerCase());
+    if (!point) return;
+
+    const lat = parseFloat(point.latitude);
+    const lng = parseFloat(point.longitude);
+
+    // Remove old markers older than 5 minutes
+    const now = Date.now();
+    sosMarkers = sosMarkers.filter(m => (now - (m._spawnedAt || 0)) < 5 * 60 * 1000);
+
+    if (typeof L !== 'undefined' && map && L.marker) {
+        const marker = L.marker([lat, lng], { title: `SOS: ${user || city}` }).addTo(map);
+        marker.bindPopup(`<strong>SOS</strong><br>${user || 'UNKNOWN'} — ${city}`).openPopup();
+        marker._spawnedAt = Date.now();
+        sosMarkers.push(marker);
+        // auto-remove after 3 minutes
+        setTimeout(() => { try { map.removeLayer(marker); } catch (e) {} }, 3 * 60 * 1000);
+        return marker;
+    }
+
+    if (typeof google !== 'undefined' && google.maps && map && google.maps.Marker) {
+        const marker = new google.maps.Marker({ position: { lat, lng }, map: map, title: `SOS: ${user || city}` });
+        const infow = new google.maps.InfoWindow({ content: `<strong>SOS</strong><br>${user || 'UNKNOWN'} — ${city}` });
+        infow.open(map, marker);
+        marker._spawnedAt = Date.now();
+        sosMarkers.push(marker);
+        setTimeout(() => { try { marker.setMap(null); } catch (e) {} }, 3 * 60 * 1000);
+        return marker;
+    }
+
+    return null;
+};
 
 // No additional overrides required; renderHeatmap handles Leaflet at runtime.

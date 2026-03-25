@@ -84,14 +84,15 @@ function initAuth() {
             <input type="text" id="signup-user" class="auth-input" placeholder="NEW CALLSIGN">
             <input type="password" id="signup-pass" class="auth-input" placeholder="SET PASSCODE">
             <select id="signup-region" class="auth-input" style="background: var(--dark); color: var(--text);">
-                <option value="Bhubaneswar">Sector: Bhubaneswar</option>
-                <option value="Cuttack">Sector: Cuttack</option>
-                <option value="Rourkela">Sector: Rourkela</option>
+                <option value="">Loading sectors...</option>
             </select>
             <button class="spawn-btn" onclick="doSignup()">ENLIST NOW ›</button>
         </div>
         <div id="auth-err" style="color: var(--rust-bright); font-size: 10px; margin-top: 10px; text-align: center;"></div>
     `;
+
+    // Populate signup regions from heatmap_locations
+    populateSignupRegions();
 
     // Sequence: Boot Animation -> Check Token -> Show App or Auth
     setTimeout(() => {
@@ -115,6 +116,19 @@ function initAuth() {
             if (authOverlay) authOverlay.style.display = 'flex';
         }
     }, 2500);
+}
+
+async function populateSignupRegions() {
+    try {
+        const select = document.getElementById('signup-region');
+        if (!select) return;
+        const data = await apiFetch('/heatmap');
+        const cities = Array.from(new Set((data || []).map(p => p.city))).filter(Boolean).sort();
+        if (!cities.length) return;
+        select.innerHTML = cities.map(c => `<option value="${c}">Sector: ${c}</option>`).join('');
+    } catch (e) {
+        // leave defaults if fetch fails
+    }
 }
 
 /**

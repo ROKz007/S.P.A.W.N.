@@ -22,6 +22,8 @@ function createApp() {
 
     // Initialize Supabase client (server requires service role key)
     const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+    // expose supabase client for socket server to use (optional persistence)
+    app.set('supabase', supabase);
 
     // --- AUTH ---
     app.post('/api/auth/signup', async (req, res) => {
@@ -148,6 +150,88 @@ function createApp() {
         }
         console.info('Broadcast (sockets disabled):', message);
         res.json({ success: true, note: 'sockets_disabled' });
+    });
+
+    // SOS history endpoint (returns recent SOS events). Requires auth.
+    app.get('/api/sos/history', authMiddleware, async (req, res) => {
+        try {
+            // Try reading from Supabase table first (if exists) and include user callsign via relation
+            const { data, error } = await supabase
+                .from('sos_events')
+                .select('user_id, city, message, created_at, users (callsign)')
+                .order('created_at', { ascending: false })
+                .limit(50);
+
+            if (!error && data) {
+                // map to friendly shape: include callsign as `user`
+                const mapped = data.map(r => ({
+                    user_id: r.user_id || null,
+                    user: (r.users && r.users.callsign) || null,
+                    city: r.city,
+                    message: r.message,
+                    time: r.created_at
+                }));
+                return res.json(mapped);
+            }
+        } catch (e) {
+            // fall through to in-memory history
+        }
+
+        // Fallback to in-memory history stored on server (if any)
+        const history = global.__sosHistory || [];
+        res.json(history.slice(0, 50));
+    });
+
+    // POST /api/sos - accept SOS via HTTP (fallback for clients without sockets)
+    app.post('/api/sos', authMiddleware, async (req, res) => {
+        try {
+            const supabase = app.get('supabase');
+            const io = app.get('io');
+            const user = req.user || null;
+            const sender = user && user.callsign ? user.callsign : (req.body.user || 'UNKNOWN');
+            const city = (user && user.region) || req.body.city || 'UNKNOWN';
+
+            if (!global.__lastSosByUser) global.__lastSosByUser = new Map();
+            if (!global.__sosHistory) global.__sosHistory = [];
+
+            const userKey = (user && user.userId) ? `id:${user.userId}` : `callsign:${sender}`;
+            const now = Date.now();
+            const last = global.__lastSosByUser.get(userKey) || 0;
+            const COOLDOWN = 60 * 1000; // 1 minute
+
+            if (now - last < COOLDOWN) {
+                const remaining = Math.ceil((COOLDOWN - (now - last)) / 1000);
+                return res.status(429).json({ error: 'cooldown', remaining });
+            }
+
+            // Accept SOS
+            global.__lastSosByUser.set(userKey, now);
+            const entry = { user: sender, city, message: req.body.message || 'EMERGENCY: SOS Beacon activated!', time: new Date().toISOString() };
+            global.__sosHistory.unshift(entry);
+            if (global.__sosHistory.length > 200) global.__sosHistory.length = 200;
+
+            // Broadcast via sockets if available
+            if (io) io.emit('sos_received', { user: entry.user, city: entry.city, message: entry.message, time: entry.time });
+
+            // Persist to Supabase if table exists (store user_id reference when available)
+            if (supabase) {
+                try {
+                    if (user && user.userId) {
+                        await supabase.from('sos_events').insert([{ user_id: user.userId, city: entry.city, message: entry.message }]);
+                    } else {
+                        // insert with null user_id if unauthenticated
+                        await supabase.from('sos_events').insert([{ user_id: null, city: entry.city, message: entry.message }]);
+                    }
+                } catch (e) {
+                    // ignore DB errors
+                }
+            }
+
+            return res.json({ success: true });
+        } catch (e) {
+            console.error('POST /api/sos error', e);
+            return res.status(500).json({ error: 'server_error' });
+        }
     });
 
     // Error handler
