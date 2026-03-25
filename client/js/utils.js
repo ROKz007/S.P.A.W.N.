@@ -116,7 +116,31 @@ async function promptChangeLocation() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', initNavProfile);
+let __navProfileInitAttempts = 0;
+function ensureNavProfileInit() {
+    // Prevent duplicate bindings once we succeed
+    if (window.__navProfileInitialized) return;
+
+    const btn = document.getElementById('nav-user-btn') || document.getElementById('nav-user');
+    const menu = document.getElementById('nav-user-menu');
+    if (!btn || !menu) {
+        if (__navProfileInitAttempts < 5) {
+            __navProfileInitAttempts += 1;
+            setTimeout(ensureNavProfileInit, 200);
+        }
+        return;
+    }
+
+    window.__navProfileInitialized = true;
+    initNavProfile();
+}
+
+// Initialize immediately if DOM is already ready, otherwise on DOMContentLoaded
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(ensureNavProfileInit, 0);
+} else {
+    document.addEventListener('DOMContentLoaded', ensureNavProfileInit);
+}
 
 /**
  * Enforce admin-only visibility for admin navigation and pages.
