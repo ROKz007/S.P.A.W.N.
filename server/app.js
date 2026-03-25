@@ -152,6 +152,30 @@ function createApp() {
         res.json({ success: true, note: 'sockets_disabled' });
     });
 
+    // Public stats endpoint (no admin requirement) for survivor dashboards
+    app.get('/api/stats', async (req, res) => {
+        try {
+            const { count: userCount, error: userError } = await supabase
+                .from('users')
+                .select('*', { count: 'exact', head: true });
+
+            const { count: tradeCount, error: tradeError } = await supabase
+                .from('trades')
+                .select('*', { count: 'exact', head: true })
+                .eq('status', 'open');
+
+            if (userError || tradeError) throw new Error('Failed to fetch stats');
+
+            res.json({
+                survivorsOnline: userCount || 0,
+                activeTrades: tradeCount || 0
+            });
+        } catch (err) {
+            console.error('Public stats error:', err);
+            res.status(500).json({ error: 'Failed to fetch stats', survivorsOnline: 0, activeTrades: 0 });
+        }
+    });
+
     // SOS history endpoint (returns recent SOS events). Requires auth.
     app.get('/api/sos/history', authMiddleware, async (req, res) => {
         try {

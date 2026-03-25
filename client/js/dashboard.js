@@ -2,8 +2,14 @@
 
 async function loadDashboardData() {
     try {
-        // 1. Fetch Admin Stats (Survivors & Active Trades)
-        const stats = await apiFetch('/admin/stats'); 
+        // Try admin stats first (if admin token present); fallback to public stats
+        let stats;
+        try {
+            stats = await apiFetch('/admin/stats');
+        } catch (err) {
+            stats = await apiFetch('/stats');
+        }
+
         document.getElementById('qs-survivors').textContent = stats.survivorsOnline || 0;
         document.getElementById('qs-trades').textContent = stats.activeTrades || 0;
 
